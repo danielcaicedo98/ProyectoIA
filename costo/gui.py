@@ -35,7 +35,9 @@ colores = {
 
 # Define la secuencia de movimiento
 
-secuencia = agente()
+agente = agente()
+
+secuencia = agente["camino"]
 # Definir la matriz (puedes reemplazar esto con la matriz que desees mostrar)
 matriz = matriz_inicial
 

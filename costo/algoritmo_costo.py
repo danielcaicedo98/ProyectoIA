@@ -1,7 +1,9 @@
 import copy
+import time
 from Reader import get_matriz
-
+tiempo_inicio = time.time()
 def agente():
+    
     matriz_inicial = get_matriz()
 
     pila_inicial = {
@@ -48,20 +50,22 @@ def agente():
     nodos.append({"padre":{
                         "pos":None,
                         "estado":None,
-                        "nodo":0
+                        "nodo":0,
                         },
                     "costo": 0,
                     "estado":{
                         "cubeta": None,
                         "llena":False},
                         "desplazamiento":None,
-                        "posicion":posicion_actual
+                        "posicion":posicion_actual,
+                        "profundidad":0
                     })
+
+#INICIO MOVER_NUMERO
 
     def mover_numero(_pila, padre,n, direccion):
 
         matriz = _pila["matriz"]
-
         padre= copy.deepcopy(padre)
         posicion_actual = encontrar_posicion(matriz, 5)
         posicion_padre = padre["padre"]["pos"]
@@ -69,6 +73,8 @@ def agente():
         estado_padre = padre["estado"]
         estado_actual = copy.deepcopy(estado_padre)
         estado_abuelo = padre["padre"]["estado"]
+        profundidad = padre["profundidad"]
+        #print(profundidad)
 
         # Variables que manejan el costo de cada paso de acuerdo a lo llena
         # que vaya la cubeta
@@ -111,9 +117,6 @@ def agente():
                 if (encontrar_posicion(matriz, 2) == None):
                     return False
 
-
-
-
                 if(
                     estado_actual["llena"] == True and
                     estado_abuelo["llena"] == False
@@ -123,7 +126,8 @@ def agente():
                     matriz[nueva_fila][nueva_columna] = agente
                     nodos.append({"padre":{"pos":posicion_actual,"estado":estado_padre,"nodo":n},"costo":costo_actual + costo, "estado":estado_actual,
                                 "desplazamiento":direccion,
-                                "posicion":(nueva_fila,nueva_columna)})
+                                "posicion":(nueva_fila,nueva_columna)
+                                ,"profundidad":profundidad + 1})
                     pila.append({"matriz":matriz,"costo":costo_actual + costo,"nodo_actual":len(nodos)-1})
                     return (nueva_fila,nueva_columna)
 
@@ -145,7 +149,9 @@ def agente():
                                     ,"costo":costo_actual + costo
                                     , "estado":estado_actual
                                     ,"desplazamiento":direccion
-                                    ,"posicion":(nueva_fila,nueva_columna)})
+                                    ,"posicion":(nueva_fila,nueva_columna)
+                                    ,"profundidad":profundidad + 1
+                                    })
                     pila.append({"matriz":matriz,"costo":costo_actual + costo,"nodo_actual":len(nodos)-1})
                     return True#(nueva_fila,nueva_columna)
 
@@ -158,10 +164,12 @@ def agente():
                     matriz[fila][columna] = 0
                     matriz[nueva_fila][nueva_columna] = agente
                     nodos.append({"padre":{"pos":(nueva_fila,nueva_columna),"estado":estado_padre,"nodo":n}
-                                    ,"costo":costo_actual + costo,
-                                    "estado":estado_actual,
-                                    "desplazamiento":direccion,
-                                    "posicion":(nueva_fila,nueva_columna)})
+                                    ,"costo":costo_actual + costo
+                                    ,"estado":estado_actual
+                                    ,"desplazamiento":direccion
+                                    ,"posicion":(nueva_fila,nueva_columna)
+                                    ,"profundidad":profundidad + 1
+                                    })
                     pila.append({"matriz":matriz,"costo":costo_actual + costo,"nodo_actual":len(nodos)-1})
                     return (nueva_fila,nueva_columna)
                 elif(
@@ -176,7 +184,9 @@ def agente():
                                     ,"costo":costo_actual + costo,
                                     "estado":estado_actual,
                                     "desplazamiento":direccion,
-                                    "posicion":(nueva_fila,nueva_columna)})
+                                    "posicion":(nueva_fila,nueva_columna)
+                                    ,"profundidad":profundidad + 1
+                                    })
                     pila.append({"matriz":matriz,"costo":costo_actual + costo,"nodo_actual":len(nodos)-1})
                     return (nueva_fila,nueva_columna)
                 if(
@@ -192,7 +202,8 @@ def agente():
                                     ,"costo":costo_actual + costo,
                                     "estado":estado_actual,
                                     "desplazamiento":direccion,
-                                    "posicion":(nueva_fila,nueva_columna)})
+                                    "posicion":(nueva_fila,nueva_columna)
+                                    ,"profundidad":profundidad + 1})
                     pila.append({"matriz":matriz,"costo":costo_actual + costo,"nodo_actual":len(nodos)-1})
                     return (nueva_fila,nueva_columna)
 
@@ -207,7 +218,8 @@ def agente():
                     matriz[nueva_fila][nueva_columna] = agente
                     nodos.append({"padre":{"pos":posicion_actual,"estado":estado_padre,"nodo":n},"costo":costo_actual + costo , "estado":estado_actual,
                                     "desplazamiento":direccion,
-                                    "posicion":(nueva_fila,nueva_columna)})
+                                    "posicion":(nueva_fila,nueva_columna)
+                                    ,"profundidad":profundidad + 1})
                     pila.append({"matriz":matriz,"costo":costo_actual + costo,"nodo_actual":len(nodos)-1})
                     return (nueva_fila,nueva_columna)
             # Verificar si la nueva posición está dentro de la matriz
@@ -221,7 +233,8 @@ def agente():
                     matriz[nueva_fila][nueva_columna] = agente
                     nodos.append({"padre":{"pos":posicion_actual,"estado":estado_padre,"nodo":n},"costo":costo_actual + costo, "estado":estado_actual,
                                     "desplazamiento":direccion,
-                                    "posicion":(nueva_fila,nueva_columna)})
+                                    "posicion":(nueva_fila,nueva_columna)
+                                    ,"profundidad":profundidad + 1})
                     pila.append({"matriz":matriz,"costo":costo_actual + costo,"nodo_actual":len(nodos)-1})
                     return (nueva_fila,nueva_columna)
 
@@ -236,7 +249,8 @@ def agente():
                     matriz[nueva_fila][nueva_columna] = agente
                     nodos.append({"padre":{"pos":posicion_actual,"estado":estado_padre,"nodo":n},"costo":costo_actual + costo, "estado":estado_actual,
                                 "desplazamiento":direccion,
-                                "posicion":(nueva_fila,nueva_columna)})
+                                "posicion":(nueva_fila,nueva_columna)
+                                ,"profundidad":profundidad + 1})
                     pila.append({"matriz":matriz,"costo":costo_actual + costo,"nodo_actual":len(nodos)-1})
                     return (nueva_fila,nueva_columna)
 
@@ -250,7 +264,8 @@ def agente():
                     matriz[nueva_fila][nueva_columna] = agente
                     nodos.append({"padre":{"pos":posicion_actual,"estado":estado_padre,"nodo":n},"costo":costo_actual + costo, "estado":estado_actual,
                                 "desplazamiento":direccion,
-                                "posicion":(nueva_fila,nueva_columna)})
+                                "posicion":(nueva_fila,nueva_columna)
+                                ,"profundidad":profundidad + 1})
                     pila.append({"matriz":matriz,"costo":costo_actual + costo,"nodo_actual":len(nodos)-1})
                     return (nueva_fila,nueva_columna)
                 elif(
@@ -262,7 +277,8 @@ def agente():
                     matriz[nueva_fila][nueva_columna] = agente
                     nodos.append({"padre":{"pos":posicion_actual,"estado":estado_padre,"nodo":n},"costo":costo_actual + costo, "estado":estado_actual,
                                 "desplazamiento":direccion,
-                                "posicion":(nueva_fila,nueva_columna)})
+                                "posicion":(nueva_fila,nueva_columna)
+                                ,"profundidad":profundidad + 1})
                     pila.append({"matriz":matriz,"costo":costo_actual + costo,"nodo_actual":len(nodos)-1})
                     return (nueva_fila,nueva_columna)
             return (nueva_fila,nueva_columna)
@@ -313,8 +329,18 @@ def agente():
                     m = pila[i]
                     minimo = pila[i]["costo"]
                     index_pila = i
+    
+    camino = llenar_pila(1,pila)  
+    ultimo_nodo = nodos[len(nodos)-1]
+    tiempo_fin = time.time()
+    tiempo_ejecucion = tiempo_fin - tiempo_inicio
+    reporte = {
+       "nodos_expandidos": len(nodos),
+       "profunidad_arbol": ultimo_nodo["profundidad"],
+       "tiempo_computo": tiempo_ejecucion 
+    }
+    print(reporte)      
+    return {"camino":camino,"reporte":reporte}
 
-    camino = llenar_pila(1,pila)        
-    return camino
+#agente()
 
-agente()
