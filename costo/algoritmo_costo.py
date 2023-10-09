@@ -333,14 +333,17 @@ def agente():
     camino = llenar_pila(1,pila)  
     ultimo_nodo = nodos[len(nodos)-1]
     tiempo_fin = time.time()
-    tiempo_ejecucion = tiempo_fin - tiempo_inicio
+    tiempo_ejecucion = (tiempo_fin - tiempo_inicio) 
+    print(tiempo_ejecucion)
+    minutos = int(tiempo_ejecucion // 60)
+    segundos = int(tiempo_ejecucion % 60)
     reporte = {
        "nodos_expandidos": len(nodos),
-       "profunidad_arbol": ultimo_nodo["profundidad"],
-       "tiempo_computo": tiempo_ejecucion 
+       "profundidad_arbol": ultimo_nodo["profundidad"],
+       "tiempo_computo": str( minutos) +":"+str(segundos)  + " minutos"
     }
     print(reporte)      
     return {"camino":camino,"reporte":reporte}
 
-#agente()
+agente()
 
