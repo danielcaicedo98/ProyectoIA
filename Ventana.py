@@ -3,6 +3,7 @@ from PIL import Image, ImageTk
 from Amplitud import agente_amplitud
 import time
 from CostoUniforme import agente
+from A_Estrella import agente_a_estrella
 
 global ventana
 global soldier
@@ -230,11 +231,28 @@ def generarMovimientosCosto():
 
     #cicloBombero(mapa)
     agente_costo = agente()
-    print[agente_costo["reporte"]]
+    #print[agente_costo["reporte"]]
     listaMovimientos = [agente_costo["camino"]]
     print("Lista movimientos: ", listaMovimientos)
     identificarMovimientosCompletos()
     mostrarOpcionesIniciales()
+
+def generarMovimientos_a_estrella():
+    global listaMovimientos
+    global lienzo
+
+    destruirBotones()
+    sprites = crearSprites()
+    dibujarSprites(sprites)
+
+    #cicloBombero(mapa)
+    agente_estrella = agente_a_estrella()
+    #print[agente_costo["reporte"]]
+    listaMovimientos = [agente_estrella["camino"]]
+    print("Lista movimientos: ", listaMovimientos)
+    identificarMovimientosCompletos()
+    mostrarOpcionesIniciales()
+
 
 
 def eliminarObjeto(fila, columna):
@@ -295,7 +313,7 @@ def mostrarOpcionesInformada():
     boton1 = tk.Button(ventana, text="Seleccionar",width=19,height=1, command=lambda: mensaje("Avara"))
     boton1.place(x=46, y=220)
 
-    boton2 = tk.Button(ventana, text="Seleccionar",width=19,height=1, command=lambda: mensaje("A*"))
+    boton2 = tk.Button(ventana, text="Seleccionar",width=19,height=1, command=lambda: generarMovimientos_a_estrella())
     boton2.place(x=46, y=388)
 
     botonVolver = tk.Button(ventana, text="Volver",width=19,height=1, command=lambda: mostrarOpcionesIniciales())

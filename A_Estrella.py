@@ -2,15 +2,15 @@ import copy
 import time
 from Reader import get_matriz
 tiempo_inicio = time.time()
-def agente():
+def agente_a_estrella():
     
     matriz_inicial = get_matriz()
 
-    pila_inicial = {
+    cola_inicial = {
         "matriz":matriz_inicial,
         "costo": 0
     }
-    pila = []
+    cola = []
     nodos = []
 
 
@@ -25,6 +25,22 @@ def agente():
         return camino
 
 
+    def encontrar_posiciones_ordenadas(matriz, numero, objetivo):
+        posiciones = []
+        
+        # Buscar todas las ocurrencias del número en la matriz y guardar sus posiciones
+        for fila in range(len(matriz)):
+            for columna in range(len(matriz[fila])):
+                if matriz[fila][columna] == numero:
+                    posiciones.append((fila, columna))
+        
+        if not posiciones:
+            return None  # El número no está en la matriz
+
+    # Ordenar las posiciones por cercanía al objetivo
+        posiciones_ordenadas = sorted(posiciones, key=lambda pos: abs(pos[1] - objetivo))
+
+        return posiciones_ordenadas
 
 
     def encontrar_posicion(matriz, numero):
@@ -41,39 +57,117 @@ def agente():
     cubeta_dos = 4
     hidrante = 6
 
+    def encontrar_posicion_mas_cercana(matriz, numero, objetivo):
+        posiciones = []
+        
+        # Buscar todas las ocurrencias del número en la matriz y guardar sus posiciones
+        for fila in range(len(matriz)):
+            for columna in range(len(matriz[fila])):
+                if matriz[fila][columna] == numero:
+                    posiciones.append((fila, columna))
+        
+        if not posiciones:
+            return None  # El número no está en la matriz
+
+        # Calcular la distancia entre el objetivo y cada posición
+        distancias = [abs((fila, columna)[1] - objetivo) for (fila, columna) in posiciones]
+
+        # Encontrar la posición más cercana
+        posicion_cercana = posiciones[distancias.index(min(distancias))]
+
+        return posicion_cercana
+
+
+
+
+    
     posicion_actual = encontrar_posicion(matriz_inicial, 5)
     agente = matriz_inicial[posicion_actual[0]][posicion_actual[1]]
-    pos_hidrante = encontrar_posicion(matriz_inicial,6)
+    pos_hidrante = encontrar_posicion(matriz_inicial,hidrante)
+    pos_fuegos = encontrar_posiciones_ordenadas(matriz_inicial,fuego,agente)
+    print(pos_fuegos)
+
+    def distancia_manhattan(posicion1, posicion2):
+        """
+        Calcula la distancia Manhattan entre dos posiciones en una matriz.
+        
+        Args:
+        posicion1: Tupla (fila1, columna1) que representa la primera posición.
+        posicion2: Tupla (fila2, columna2) que representa la segunda posición.
+        
+        Returns:
+        La distancia Manhattan entre las dos posiciones.
+        """
+        fila1, columna1 = posicion1
+        fila2, columna2 = posicion2
+        distancia = abs(fila1 - fila2) + abs(columna1 - columna2)
+        return distancia
+    
+    
 
 
+
+    def calcular_distancia_manhattan(punto1, punto2):
+        return abs(punto1[0] - punto2[0]) + abs(punto1[1] - punto2[1])
+
+    def manhattan(matriz, primer_numero, segundo_numero):
+        posiciones_primer_numero = []
+        posiciones_segundo_numero = []
+        
+        # Buscar todas las ocurrencias de los números en la matriz y guardar sus posiciones
+        for fila in range(len(matriz)):
+            for columna in range(len(matriz[fila])):
+                if matriz[fila][columna] == primer_numero:
+                    posiciones_primer_numero.append((fila, columna))
+                elif matriz[fila][columna] == segundo_numero:
+                    posiciones_segundo_numero.append((fila, columna))
+        
+        if not posiciones_primer_numero or not posiciones_segundo_numero:
+            return None  # Uno de los números no está en la matriz
+
+        distancia_minima = float('inf')
+
+        # Calcular la distancia Manhattan entre el primer número y los segundos números
+        for posicion_primer_numero in posiciones_primer_numero:
+            for posicion_segundo_numero in posiciones_segundo_numero:
+                distancia = calcular_distancia_manhattan(posicion_primer_numero, posicion_segundo_numero)
+                distancia_minima = min(distancia, distancia_minima)
+
+        return distancia_minima
 
     nodos.append({"padre":{
-                        "pos":None,
-                        "estado":None,
-                        "nodo":0,
-                        },
-                    "costo": 0,
-                    "estado":{
-                        "cubeta": None,
-                        "llena":False},
-                        "desplazamiento":None,
-                        "posicion":posicion_actual,
-                        "profundidad":0
-                    })
+                    "pos":None,
+                    "estado":None,
+                    "nodo":0,
+                    },
+                "costo": 0,
+                "heuristica": manhattan(matriz_inicial,2,5),
+                "estado":{
+                    "cubeta": None,
+                    "llena":False},
+                    "desplazamiento":None,
+                    "posicion":posicion_actual,
+                    "profundidad":0
+                })
+    print(manhattan(matriz_inicial,8,5))
+
+
 
 #INICIO MOVER_NUMERO
 
-    def mover_numero(_pila, padre,n, direccion):
+    def mover_numero(_cola, padre,n, direccion):
 
-        matriz = _pila["matriz"]
+        matriz = _cola["matriz"]
         padre= copy.deepcopy(padre)
         posicion_actual = encontrar_posicion(matriz, 5)
         posicion_padre = padre["padre"]["pos"]
-        costo_actual = padre["costo"]
+        costo_actual =    0  #padre["costo"]
         estado_padre = padre["estado"]
         estado_actual = copy.deepcopy(estado_padre)
         estado_abuelo = padre["padre"]["estado"]
         profundidad = padre["profundidad"]
+        heuristica_actual = manhattan(matriz,fuego,agente)
+        # print(heuristica_actual)
         #print(profundidad)
 
         # Variables que manejan el costo de cada paso de acuerdo a lo llena
@@ -115,6 +209,8 @@ def agente():
                 matriz[nueva_fila][nueva_columna] != muro ):
 
                 if (encontrar_posicion(matriz, 2) == None):
+                    print(matriz)
+                    print(padre)
                     return False
 
                 if(
@@ -124,11 +220,19 @@ def agente():
 
                     matriz[fila][columna] = 0
                     matriz[nueva_fila][nueva_columna] = agente
-                    nodos.append({"padre":{"pos":posicion_actual,"estado":estado_padre,"nodo":n},"costo":costo_actual + costo, "estado":estado_actual,
-                                "desplazamiento":direccion,
+                    nodos.append({"padre":
+                                    {
+                                        "pos":posicion_actual
+                                        ,"estado":estado_padre
+                                        ,"nodo":n
+                                    }
+                                ,"costo":costo_actual + costo
+                                ,"estado":estado_actual
+                                ,"heuristica":heuristica_actual
+                                ,"desplazamiento":direccion,
                                 "posicion":(nueva_fila,nueva_columna)
                                 ,"profundidad":profundidad + 1})
-                    pila.append({"matriz":matriz,"costo":costo_actual + costo,"nodo_actual":len(nodos)-1})
+                    cola.append({"matriz":matriz,"costo":costo_actual + costo,"heuristica":heuristica_actual,"nodo_actual":len(nodos)-1})
                     return (nueva_fila,nueva_columna)
 
                 if(
@@ -147,12 +251,13 @@ def agente():
                                            "nodo":n
                                            }
                                     ,"costo":costo_actual + costo
+                                    ,"heuristica":heuristica_actual
                                     , "estado":estado_actual
                                     ,"desplazamiento":direccion
                                     ,"posicion":(nueva_fila,nueva_columna)
                                     ,"profundidad":profundidad + 1
                                     })
-                    pila.append({"matriz":matriz,"costo":costo_actual + costo,"nodo_actual":len(nodos)-1})
+                    cola.append({"matriz":matriz,"costo":costo_actual + costo,"heuristica":heuristica_actual,"nodo_actual":len(nodos)-1})
                     return True#(nueva_fila,nueva_columna)
 
                 if(
@@ -165,12 +270,13 @@ def agente():
                     matriz[nueva_fila][nueva_columna] = agente
                     nodos.append({"padre":{"pos":(nueva_fila,nueva_columna),"estado":estado_padre,"nodo":n}
                                     ,"costo":costo_actual + costo
+                                    ,"heuristica":heuristica_actual
                                     ,"estado":estado_actual
                                     ,"desplazamiento":direccion
                                     ,"posicion":(nueva_fila,nueva_columna)
                                     ,"profundidad":profundidad + 1
                                     })
-                    pila.append({"matriz":matriz,"costo":costo_actual + costo,"nodo_actual":len(nodos)-1})
+                    cola.append({"matriz":matriz,"costo":costo_actual + costo,"heuristica":heuristica_actual,"nodo_actual":len(nodos)-1})
                     return (nueva_fila,nueva_columna)
                 elif(
                     matriz[nueva_fila][nueva_columna] == fuego and
@@ -181,13 +287,14 @@ def agente():
                     matriz[fila][columna] = 0
                     matriz[nueva_fila][nueva_columna] = agente
                     nodos.append({"padre":{"pos":(nueva_fila,nueva_columna),"estado":estado_padre,"nodo":n}
-                                    ,"costo":costo_actual + costo,
-                                    "estado":estado_actual,
+                                    ,"costo":costo_actual + costo
+                                    ,"heuristica":heuristica_actual
+                                    ,"estado":estado_actual,
                                     "desplazamiento":direccion,
                                     "posicion":(nueva_fila,nueva_columna)
                                     ,"profundidad":profundidad + 1
                                     })
-                    pila.append({"matriz":matriz,"costo":costo_actual + costo,"nodo_actual":len(nodos)-1})
+                    cola.append({"matriz":matriz,"costo":costo_actual + costo,"heuristica":heuristica_actual,"nodo_actual":len(nodos)-1})
                     return (nueva_fila,nueva_columna)
                 if(
                     matriz[nueva_fila][nueva_columna] == fuego and
@@ -199,12 +306,13 @@ def agente():
                     matriz[fila][columna] = 0
                     matriz[nueva_fila][nueva_columna] = agente
                     nodos.append({"padre":{"pos":(nueva_fila,nueva_columna),"estado":estado_padre,"nodo":n}
-                                    ,"costo":costo_actual + costo,
-                                    "estado":estado_actual,
+                                    ,"costo":costo_actual + costo
+                                    ,"heuristica":heuristica_actual
+                                    ,"estado":estado_actual,
                                     "desplazamiento":direccion,
                                     "posicion":(nueva_fila,nueva_columna)
                                     ,"profundidad":profundidad + 1})
-                    pila.append({"matriz":matriz,"costo":costo_actual + costo,"nodo_actual":len(nodos)-1})
+                    cola.append({"matriz":matriz,"costo":costo_actual + costo,"heuristica":heuristica_actual,"nodo_actual":len(nodos)-1})
                     return (nueva_fila,nueva_columna)
 
 
@@ -216,11 +324,14 @@ def agente():
                     estado_actual = {"cubeta": "1L","llena":False}
                     matriz[fila][columna] = 0
                     matriz[nueva_fila][nueva_columna] = agente
-                    nodos.append({"padre":{"pos":posicion_actual,"estado":estado_padre,"nodo":n},"costo":costo_actual + costo , "estado":estado_actual,
-                                    "desplazamiento":direccion,
+                    nodos.append({"padre":{"pos":posicion_actual,"estado":estado_padre,"nodo":n}
+                                  ,"costo":costo_actual + costo 
+                                  ,"heuristica":heuristica_actual
+                                  ,"estado":estado_actual
+                                  ,"desplazamiento":direccion,
                                     "posicion":(nueva_fila,nueva_columna)
                                     ,"profundidad":profundidad + 1})
-                    pila.append({"matriz":matriz,"costo":costo_actual + costo,"nodo_actual":len(nodos)-1})
+                    cola.append({"matriz":matriz,"costo":costo_actual + costo,"heuristica":heuristica_actual,"nodo_actual":len(nodos)-1})
                     return (nueva_fila,nueva_columna)
             # Verificar si la nueva posición está dentro de la matriz
                 if(
@@ -231,11 +342,14 @@ def agente():
                     estado_actual = {"cubeta": "2L","llena":False}
                     matriz[fila][columna] = 0
                     matriz[nueva_fila][nueva_columna] = agente
-                    nodos.append({"padre":{"pos":posicion_actual,"estado":estado_padre,"nodo":n},"costo":costo_actual + costo, "estado":estado_actual,
-                                    "desplazamiento":direccion,
+                    nodos.append({"padre":{"pos":posicion_actual,"estado":estado_padre,"nodo":n}
+                                  ,"costo":costo_actual + costo
+                                  ,"heuristica":heuristica_actual
+                                  , "estado":estado_actual
+                                  , "desplazamiento":direccion,
                                     "posicion":(nueva_fila,nueva_columna)
                                     ,"profundidad":profundidad + 1})
-                    pila.append({"matriz":matriz,"costo":costo_actual + costo,"nodo_actual":len(nodos)-1})
+                    cola.append({"matriz":matriz,"costo":costo_actual + costo,"heuristica":heuristica_actual,"nodo_actual":len(nodos)-1})
                     return (nueva_fila,nueva_columna)
 
 
@@ -247,11 +361,14 @@ def agente():
 
                     matriz[fila][columna] = 0
                     matriz[nueva_fila][nueva_columna] = agente
-                    nodos.append({"padre":{"pos":posicion_actual,"estado":estado_padre,"nodo":n},"costo":costo_actual + costo, "estado":estado_actual,
+                    nodos.append({"padre":{"pos":posicion_actual,"estado":estado_padre,"nodo":n}
+                                  ,"costo":costo_actual + costo
+                                  ,"heuristica":heuristica_actual
+                                  , "estado":estado_actual,
                                 "desplazamiento":direccion,
                                 "posicion":(nueva_fila,nueva_columna)
                                 ,"profundidad":profundidad + 1})
-                    pila.append({"matriz":matriz,"costo":costo_actual + costo,"nodo_actual":len(nodos)-1})
+                    cola.append({"matriz":matriz,"costo":costo_actual + costo,"heuristica":heuristica_actual,"nodo_actual":len(nodos)-1})
                     return (nueva_fila,nueva_columna)
 
                 if(
@@ -262,11 +379,14 @@ def agente():
                 ):
                     matriz[fila][columna] = 0
                     matriz[nueva_fila][nueva_columna] = agente
-                    nodos.append({"padre":{"pos":posicion_actual,"estado":estado_padre,"nodo":n},"costo":costo_actual + costo, "estado":estado_actual,
+                    nodos.append({"padre":{"pos":posicion_actual,"estado":estado_padre,"nodo":n}
+                                  ,"costo":costo_actual + costo
+                                  ,"heuristica":heuristica_actual
+                                  , "estado":estado_actual,
                                 "desplazamiento":direccion,
                                 "posicion":(nueva_fila,nueva_columna)
                                 ,"profundidad":profundidad + 1})
-                    pila.append({"matriz":matriz,"costo":costo_actual + costo,"nodo_actual":len(nodos)-1})
+                    cola.append({"matriz":matriz,"costo":costo_actual + costo,"heuristica":heuristica_actual,"nodo_actual":len(nodos)-1})
                     return (nueva_fila,nueva_columna)
                 elif(
                     estado_actual["cubeta"] == "2L" and
@@ -275,26 +395,29 @@ def agente():
 
                     matriz[fila][columna] = 0
                     matriz[nueva_fila][nueva_columna] = agente
-                    nodos.append({"padre":{"pos":posicion_actual,"estado":estado_padre,"nodo":n},"costo":costo_actual + costo, "estado":estado_actual,
+                    nodos.append({"padre":{"pos":posicion_actual,"estado":estado_padre,"nodo":n}
+                                ,"costo":costo_actual + costo
+                                ,"heuristica":heuristica_actual
+                                , "estado":estado_actual,
                                 "desplazamiento":direccion,
                                 "posicion":(nueva_fila,nueva_columna)
                                 ,"profundidad":profundidad + 1})
-                    pila.append({"matriz":matriz,"costo":costo_actual + costo,"nodo_actual":len(nodos)-1})
+                    cola.append({"matriz":matriz,"costo":costo_actual + costo,"heuristica":heuristica_actual,"nodo_actual":len(nodos)-1})
                     return (nueva_fila,nueva_columna)
             return (nueva_fila,nueva_columna)
 
 
-    matriz_abajo = mover_numero(copy.deepcopy(pila_inicial), nodos[0], 0,"abajo")
-    matriz_arriba = mover_numero(copy.deepcopy(pila_inicial), nodos[0], 0, "derecha")
-    matriz_izquierda = mover_numero(copy.deepcopy(pila_inicial), nodos[0],0, "arriba")
-    matriz_derecha = mover_numero(copy.deepcopy(pila_inicial),nodos[0], 0, "izquierda")
+    matriz_abajo = mover_numero(copy.deepcopy(cola_inicial), nodos[0], 0,"abajo")
+    matriz_arriba = mover_numero(copy.deepcopy(cola_inicial), nodos[0], 0, "derecha")
+    matriz_izquierda = mover_numero(copy.deepcopy(cola_inicial), nodos[0],0, "arriba")
+    matriz_derecha = mover_numero(copy.deepcopy(cola_inicial),nodos[0], 0, "izquierda")
 
 
-    def llenar_pila(n, pila):
+    def llenar_cola(n, cola):
 
-        m = pila[0]
-        minimo = pila[0]["costo"]
-        index_pila = 0
+        m = cola[0]
+        minimo = cola[0]["costo"] + cola[0]["heuristica"]
+        index_cola = 0
         index = 0
         while True:
 
@@ -316,25 +439,24 @@ def agente():
             if not matriz_derecha:
                 return encontrar_camino(n)
 
-            pila.pop(index_pila)
-            n = pila[0]["nodo_actual"]
-            m = pila[0]
-            minimo = pila[0]["costo"]
-            index_pila = 0
+            cola.pop(index_cola)
+            n = cola[0]["nodo_actual"]
+            m = cola[0]
+            minimo = cola[0]["costo"] + cola[0]["heuristica"]
+            index_cola = 0
 
-            for i in range(len(pila)):                
-                if pila[i]["costo"] < minimo:
-                    minimo = pila[i]["costo"]
-                    n = pila[i]["nodo_actual"]
-                    m = pila[i]
-                    minimo = pila[i]["costo"]
-                    index_pila = i
+            for i in range(len(cola)):                
+                if (cola[i]["costo"] + cola[i]["heuristica"] )< minimo:
+                    minimo = cola[i]["costo"]
+                    n = cola[i]["nodo_actual"]
+                    m = cola[i]
+                    minimo = (cola[i]["costo"] + cola[i]["heuristica"] )
+                    index_cola = i
     
-    camino = llenar_pila(1,pila)  
+    camino = llenar_cola(1,cola)  
     ultimo_nodo = nodos[len(nodos)-1]
     tiempo_fin = time.time()
-    tiempo_ejecucion = (tiempo_fin - tiempo_inicio) 
-    print(tiempo_ejecucion)
+    tiempo_ejecucion = (tiempo_fin - tiempo_inicio)    
     minutos = int(tiempo_ejecucion // 60)
     segundos = int(tiempo_ejecucion % 60)
     reporte = {
@@ -342,8 +464,9 @@ def agente():
        "profundidad_arbol": ultimo_nodo["profundidad"],
        "tiempo_computo": str( minutos) +":"+str(segundos)  + " minutos"
     }
-    print(reporte)      
+    # print(reporte)   
+    # print(nodos[len(nodos)-1])   
     return {"camino":camino,"reporte":reporte}
 
-agente()
+agente_a_estrella()
 
