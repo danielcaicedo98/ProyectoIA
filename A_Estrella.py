@@ -24,25 +24,6 @@ def agente_a_estrella():
         camino.reverse()
         return camino
 
-
-    def encontrar_posiciones_ordenadas(matriz, numero, objetivo):
-        posiciones = []
-        
-        # Buscar todas las ocurrencias del número en la matriz y guardar sus posiciones
-        for fila in range(len(matriz)):
-            for columna in range(len(matriz[fila])):
-                if matriz[fila][columna] == numero:
-                    posiciones.append((fila, columna))
-        
-        if not posiciones:
-            return None  # El número no está en la matriz
-
-    # Ordenar las posiciones por cercanía al objetivo
-        posiciones_ordenadas = sorted(posiciones, key=lambda pos: abs(pos[1] - objetivo))
-
-        return posiciones_ordenadas
-
-
     def encontrar_posicion(matriz, numero):
         # Encuentra la posición actual del número en la matriz
         for fila in range(len(matriz)):
@@ -88,7 +69,6 @@ def agente_a_estrella():
             for posicion_segundo_numero in posiciones_segundo_numero:
                 distancia = calcular_distancia_manhattan(posicion_primer_numero, posicion_segundo_numero)
                 distancia_minima = min(distancia, distancia_minima)
-
         return distancia_minima
 
     nodos.append({"padre":{
@@ -143,10 +123,6 @@ def agente_a_estrella():
         }
         # Calcular la nueva posición
         desplazamiento = desplazamientos.get(direccion)
-
-
-
-
         if desplazamiento:
             nueva_fila = fila + desplazamiento[0]
             nueva_columna = columna + desplazamiento[1]
@@ -155,7 +131,7 @@ def agente_a_estrella():
                 0 <= nueva_columna < len(matriz[nueva_fila]) and
                 matriz[nueva_fila][nueva_columna] != muro ):
 
-                if (encontrar_posicion(matriz, 2) == None):                    
+                if (encontrar_posicion(matriz, 2) == None):   
                     return False
 
                 if(
@@ -366,19 +342,19 @@ def agente_a_estrella():
 
             matriz_abajo = mover_numero(copy.deepcopy(m), nodos[n], n, "abajo")
             if not matriz_abajo:
-                return encontrar_camino(n)
+                return {"camino":encontrar_camino(n), "index":n}
 
             matriz_arriba = mover_numero(copy.deepcopy(m), nodos[n], n, "derecha")
             if not matriz_arriba:
-                return encontrar_camino(n)
+                return {"camino":encontrar_camino(n), "index":n}
 
             matriz_izquierda = mover_numero(copy.deepcopy(m), nodos[n], n, "arriba")
             if not matriz_izquierda:
-                return encontrar_camino(n)
+                return {"camino":encontrar_camino(n), "index":n}
 
             matriz_derecha = mover_numero(copy.deepcopy(m), nodos[n], n, "izquierda")
             if not matriz_derecha:
-                return encontrar_camino(n)
+                return {"camino":encontrar_camino(n), "index":n}
 
             cola.pop(index_cola)
             n = cola[0]["nodo_actual"]
@@ -396,8 +372,8 @@ def agente_a_estrella():
                     index_cola = i
                    
     
-    camino = llenar_cola(1,cola)  
-    ultimo_nodo = nodos[len(nodos)-1]
+    respuesta = llenar_cola(1,cola)  
+    ultimo_nodo = nodos[respuesta["index"]]    
     tiempo_fin = time.time()
     tiempo_ejecucion = (tiempo_fin - tiempo_inicio)    
     minutos = int(tiempo_ejecucion // 60)
@@ -407,4 +383,5 @@ def agente_a_estrella():
        "profundidad_arbol": ultimo_nodo["profundidad"],
        "tiempo_computo": str( minutos) +":"+str(segundos)  + " minutos"
     }    
-    return {"camino":camino,"reporte":reporte}
+    return {"camino":respuesta["camino"],"reporte":reporte}
+agente_a_estrella()
