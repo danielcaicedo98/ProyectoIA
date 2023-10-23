@@ -57,53 +57,9 @@ def agente_a_estrella():
     cubeta_dos = 4
     hidrante = 6
 
-    def encontrar_posicion_mas_cercana(matriz, numero, objetivo):
-        posiciones = []
-        
-        # Buscar todas las ocurrencias del número en la matriz y guardar sus posiciones
-        for fila in range(len(matriz)):
-            for columna in range(len(matriz[fila])):
-                if matriz[fila][columna] == numero:
-                    posiciones.append((fila, columna))
-        
-        if not posiciones:
-            return None  # El número no está en la matriz
-
-        # Calcular la distancia entre el objetivo y cada posición
-        distancias = [abs((fila, columna)[1] - objetivo) for (fila, columna) in posiciones]
-
-        # Encontrar la posición más cercana
-        posicion_cercana = posiciones[distancias.index(min(distancias))]
-
-        return posicion_cercana
-
-
-
-
-    
     posicion_actual = encontrar_posicion(matriz_inicial, 5)
     agente = matriz_inicial[posicion_actual[0]][posicion_actual[1]]
-    pos_hidrante = encontrar_posicion(matriz_inicial,hidrante)
-    pos_fuegos = encontrar_posiciones_ordenadas(matriz_inicial,fuego,agente)
-    print(pos_fuegos)
-
-    def distancia_manhattan(posicion1, posicion2):
-        """
-        Calcula la distancia Manhattan entre dos posiciones en una matriz.
-        
-        Args:
-        posicion1: Tupla (fila1, columna1) que representa la primera posición.
-        posicion2: Tupla (fila2, columna2) que representa la segunda posición.
-        
-        Returns:
-        La distancia Manhattan entre las dos posiciones.
-        """
-        fila1, columna1 = posicion1
-        fila2, columna2 = posicion2
-        distancia = abs(fila1 - fila2) + abs(columna1 - columna2)
-        return distancia
-    
-    
+    pos_hidrante = encontrar_posicion(matriz_inicial,hidrante) 
 
 
 
@@ -149,9 +105,6 @@ def agente_a_estrella():
                     "posicion":posicion_actual,
                     "profundidad":0
                 })
-    print(manhattan(matriz_inicial,8,5))
-
-
 
 #INICIO MOVER_NUMERO
 
@@ -161,18 +114,12 @@ def agente_a_estrella():
         padre= copy.deepcopy(padre)
         posicion_actual = encontrar_posicion(matriz, 5)
         posicion_padre = padre["padre"]["pos"]
-        costo_actual =    0  #padre["costo"]
+        costo_actual =  padre["costo"]
         estado_padre = padre["estado"]
         estado_actual = copy.deepcopy(estado_padre)
         estado_abuelo = padre["padre"]["estado"]
         profundidad = padre["profundidad"]
-        heuristica_actual = manhattan(matriz,fuego,agente)
-        # print(heuristica_actual)
-        #print(profundidad)
-
-        # Variables que manejan el costo de cada paso de acuerdo a lo llena
-        # que vaya la cubeta
-
+        heuristica_actual = manhattan(matriz,fuego,agente)        
         costo = 1
         if( estado_actual["cubeta"] == "1L" and
             estado_actual["llena"] == True): costo = 2
@@ -208,9 +155,7 @@ def agente_a_estrella():
                 0 <= nueva_columna < len(matriz[nueva_fila]) and
                 matriz[nueva_fila][nueva_columna] != muro ):
 
-                if (encontrar_posicion(matriz, 2) == None):
-                    print(matriz)
-                    print(padre)
+                if (encontrar_posicion(matriz, 2) == None):                    
                     return False
 
                 if(
@@ -315,8 +260,6 @@ def agente_a_estrella():
                     cola.append({"matriz":matriz,"costo":costo_actual + costo,"heuristica":heuristica_actual,"nodo_actual":len(nodos)-1})
                     return (nueva_fila,nueva_columna)
 
-
-
                 if(
                     matriz[nueva_fila][nueva_columna] == cubeta_uno and
                     estado_actual["cubeta"] == None #and (nueva_fila,nueva_columna) != fuego
@@ -416,14 +359,12 @@ def agente_a_estrella():
     def llenar_cola(n, cola):
 
         m = cola[0]
-        minimo = cola[0]["costo"] + cola[0]["heuristica"]
+        minimo =  cola[0]["heuristica"] + cola[0]["costo"]        
         index_cola = 0
-        index = 0
+        
         while True:
 
-
             matriz_abajo = mover_numero(copy.deepcopy(m), nodos[n], n, "abajo")
-
             if not matriz_abajo:
                 return encontrar_camino(n)
 
@@ -442,16 +383,18 @@ def agente_a_estrella():
             cola.pop(index_cola)
             n = cola[0]["nodo_actual"]
             m = cola[0]
-            minimo = cola[0]["costo"] + cola[0]["heuristica"]
+            minimo =  cola[0]["heuristica"] + cola[0]["costo"]
             index_cola = 0
+            
 
-            for i in range(len(cola)):                
+            for i in range(len(cola)):                              
                 if (cola[i]["costo"] + cola[i]["heuristica"] )< minimo:
                     minimo = cola[i]["costo"]
                     n = cola[i]["nodo_actual"]
                     m = cola[i]
                     minimo = (cola[i]["costo"] + cola[i]["heuristica"] )
                     index_cola = i
+                   
     
     camino = llenar_cola(1,cola)  
     ultimo_nodo = nodos[len(nodos)-1]
@@ -463,10 +406,5 @@ def agente_a_estrella():
        "nodos_expandidos": len(nodos),
        "profundidad_arbol": ultimo_nodo["profundidad"],
        "tiempo_computo": str( minutos) +":"+str(segundos)  + " minutos"
-    }
-    # print(reporte)   
-    # print(nodos[len(nodos)-1])   
+    }    
     return {"camino":camino,"reporte":reporte}
-
-agente_a_estrella()
-
