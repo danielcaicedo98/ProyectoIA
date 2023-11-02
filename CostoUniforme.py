@@ -322,13 +322,13 @@ def agente():
             minimo = pila[0]["costo"]
             index_pila = 0
 
-            # for i in range(len(pila)):                
-            #     if pila[i]["costo"] < minimo:
-            #         minimo = pila[i]["costo"]
-            #         n = pila[i]["nodo_actual"]
-            #         m = pila[i]
-            #         minimo = pila[i]["costo"]
-            #         index_pila = i
+            for i in range(len(pila)):                
+                if pila[i]["costo"] < minimo:
+                    minimo = pila[i]["costo"]
+                    n = pila[i]["nodo_actual"]
+                    m = pila[i]
+                    minimo = pila[i]["costo"]
+                    index_pila = i
     
     camino = llenar_pila(1,pila)  
     ultimo_nodo = nodos[len(nodos)-1]

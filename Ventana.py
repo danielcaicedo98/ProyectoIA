@@ -230,7 +230,7 @@ def generarMovimientosCosto():
 
     #cicloBombero(mapa)
     agente_costo = agente()
-    print[agente_costo["reporte"]]
+    #print[agente_costo["reporte"]]
     listaMovimientos = [agente_costo["camino"]]
     print("Lista movimientos: ", listaMovimientos)
     identificarMovimientosCompletos()
@@ -311,7 +311,7 @@ def agregarImagenMenu(Imagen):
     OpcionesImg = ImageTk.PhotoImage(opciones)
     imagen = lienzo.create_image(0,0, anchor=tk.NW, image=OpcionesImg)
     lienzo.lift(imagen)
-    print("hola")
+    
 
 
 def destruirBotones():
