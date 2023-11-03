@@ -2,9 +2,10 @@ import tkinter as tk
 from PIL import Image, ImageTk
 from Amplitud import agente_amplitud
 import time
+from Avara import agente_avara
 from CostoUniforme import agente
+from A_Estrella import agente_a_estrella
 from Profundidad import agente_profundidad
-from A_estrella import agente_a_estrella
 
 global ventana
 global soldier
@@ -206,6 +207,21 @@ def identificarMovimientosCompletos():
             moverSoldado(0, direccion)
             eliminarObjeto(fila_actual, columna_actual)
             time.sleep(1)
+def generarMovimientosProfundidad():
+    global listaMovimientos
+    global lienzo
+
+    destruirBotones()
+    sprites = crearSprites()
+    dibujarSprites(sprites)
+
+    #cicloBombero(mapa)
+    profundidad = agente_profundidad()
+    #print(agente_costo["reporte"])
+    listaMovimientos = [profundidad["camino"]]
+    print("Lista movimientos: ", listaMovimientos)
+    identificarMovimientosCompletos()
+    mostrarOpcionesIniciales()               
 
 def generarMovimientosAmplitud():
     global listaMovimientos
@@ -232,13 +248,13 @@ def generarMovimientosCosto():
 
     #cicloBombero(mapa)
     agente_costo = agente()
-    #print(agente_costo["reporte"])
+    #print[agente_costo["reporte"]]
     listaMovimientos = [agente_costo["camino"]]
     print("Lista movimientos: ", listaMovimientos)
     identificarMovimientosCompletos()
     mostrarOpcionesIniciales()
 
-def generarMovimientosProfundidad():
+def generarMovimientos_a_estrella():
     global listaMovimientos
     global lienzo
 
@@ -247,28 +263,31 @@ def generarMovimientosProfundidad():
     dibujarSprites(sprites)
 
     #cicloBombero(mapa)
-    profundidad = agente_profundidad()
-    #print(agente_costo["reporte"])
-    listaMovimientos = [profundidad["camino"]]
+    agente_estrella = agente_a_estrella()
+    #print[agente_costo["reporte"]]
+    listaMovimientos = [agente_estrella["camino"]]
     print("Lista movimientos: ", listaMovimientos)
     identificarMovimientosCompletos()
-    mostrarOpcionesIniciales()    
+    mostrarOpcionesIniciales()
 
-def generarMovimientosA_Estrella():
+def generarMovimientos_avara():
+    # mensaje("avara")
     global listaMovimientos
     global lienzo
-
+    print(1)
     destruirBotones()
     sprites = crearSprites()
     dibujarSprites(sprites)
+    print(2)
 
     #cicloBombero(mapa)
-    a_estrella = agente_a_estrella()
-    #print(agente_costo["reporte"])
-    listaMovimientos = [a_estrella["camino"]]
+    agente_avara1 = agente_avara()
+    #print[agente_costo["reporte"]]
+    listaMovimientos = [agente_avara1["camino"]]
     print("Lista movimientos: ", listaMovimientos)
     identificarMovimientosCompletos()
-    mostrarOpcionesIniciales()    
+    mostrarOpcionesIniciales()
+
 
 
 def eliminarObjeto(fila, columna):
@@ -290,34 +309,13 @@ def mostrarOpcionesIniciales():
 
     destruirBotones()
 
-    boton1 = tk.Button(ventana, text="Seleccionar",width=19,height=1, command=lambda: mostrarOpcionesNoInformada())
-    boton1.place(x=46, y=388)
+    boton1 = tk.Button(ventana, text="Seleccionar",width=19,height=1, command=lambda: mostrarOpcionesInformada())
+    boton1.place(x=46, y=220)
 
-    boton2 = tk.Button(ventana, text="Seleccionar",width=19,height=1, command=lambda: mostrarOpcionesInformada())
-    boton2.place(x=46, y=220)   
+    boton2 = tk.Button(ventana, text="Seleccionar",width=19,height=1, command=lambda: mostrarOpcionesNoInformada())
+    boton2.place(x=46, y=388)
 
     agregarImagenMenu("Opciones")
-
-# def mostrarOpcionesNoInformada():
-#     global lienzo, OpcionesImg
-#     global boton1, boton2, boton3, botonVolver
-#     global boton3, boton4, boton5
-
-#     destruirBotones()
-
-#     boton3 = tk.Button(ventana, text="Seleccionar",width=19,height=1, command=lambda: generarMovimientosAmplitud())
-#     boton3.place(x=47, y=160)
-
-#     boton4 = tk.Button(ventana, text="Seleccionar",width=19,height=1, command=lambda: generarMovimientosCosto())
-#     boton4.place(x=47, y=327)
-
-#     boton5 = tk.Button(ventana, text="Seleccionar",width=19,height=1, command=lambda: generarMovimientosProfundidad())
-#     boton5.place(x=47, y=497)
-
-#     botonVolver = tk.Button(ventana, text="Volver",width=19,height=1, command=lambda: mostrarOpcionesIniciales())
-#     botonVolver.place(x=47, y=600)
-
-#     agregarImagenMenu("NoInformadaOpciones")
 
 def mostrarOpcionesNoInformada():
     global lienzo, OpcionesImg
@@ -338,7 +336,7 @@ def mostrarOpcionesNoInformada():
     botonVolver = tk.Button(ventana, text="Volver",width=19,height=1, command=lambda: mostrarOpcionesIniciales())
     botonVolver.place(x=47, y=600)
 
-    agregarImagenMenu("NoInformadaOpciones")    
+    agregarImagenMenu("NoInformadaOpciones")
 
 def mostrarOpcionesInformada():
     
@@ -347,10 +345,10 @@ def mostrarOpcionesInformada():
 
     destruirBotones()
 
-    boton1 = tk.Button(ventana, text="Seleccionar",width=19,height=1, command=lambda: mensaje("Avara"))
+    boton1 = tk.Button(ventana, text="Seleccionar",width=19,height=1, command=lambda: generarMovimientos_avara())
     boton1.place(x=46, y=220)
 
-    boton2 = tk.Button(ventana, text="Seleccionar",width=19,height=1, command=lambda: generarMovimientosA_Estrella())
+    boton2 = tk.Button(ventana, text="Seleccionar",width=19,height=1, command=lambda: generarMovimientos_a_estrella())
     boton2.place(x=46, y=388)
 
     botonVolver = tk.Button(ventana, text="Volver",width=19,height=1, command=lambda: mostrarOpcionesIniciales())
