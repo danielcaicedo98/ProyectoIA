@@ -3,6 +3,8 @@ from PIL import Image, ImageTk
 from Amplitud import agente_amplitud
 import time
 from CostoUniforme import agente
+from Profundidad import agente_profundidad
+from A_estrella import agente_a_estrella
 
 global ventana
 global soldier
@@ -230,11 +232,43 @@ def generarMovimientosCosto():
 
     #cicloBombero(mapa)
     agente_costo = agente()
-    #print[agente_costo["reporte"]]
+    #print(agente_costo["reporte"])
     listaMovimientos = [agente_costo["camino"]]
     print("Lista movimientos: ", listaMovimientos)
     identificarMovimientosCompletos()
     mostrarOpcionesIniciales()
+
+def generarMovimientosProfundidad():
+    global listaMovimientos
+    global lienzo
+
+    destruirBotones()
+    sprites = crearSprites()
+    dibujarSprites(sprites)
+
+    #cicloBombero(mapa)
+    profundidad = agente_profundidad()
+    #print(agente_costo["reporte"])
+    listaMovimientos = [profundidad["camino"]]
+    print("Lista movimientos: ", listaMovimientos)
+    identificarMovimientosCompletos()
+    mostrarOpcionesIniciales()    
+
+def generarMovimientosA_Estrella():
+    global listaMovimientos
+    global lienzo
+
+    destruirBotones()
+    sprites = crearSprites()
+    dibujarSprites(sprites)
+
+    #cicloBombero(mapa)
+    a_estrella = agente_a_estrella()
+    #print(agente_costo["reporte"])
+    listaMovimientos = [a_estrella["camino"]]
+    print("Lista movimientos: ", listaMovimientos)
+    identificarMovimientosCompletos()
+    mostrarOpcionesIniciales()    
 
 
 def eliminarObjeto(fila, columna):
@@ -256,13 +290,34 @@ def mostrarOpcionesIniciales():
 
     destruirBotones()
 
-    boton1 = tk.Button(ventana, text="Seleccionar",width=19,height=1, command=lambda: mostrarOpcionesInformada())
-    boton1.place(x=46, y=220)
+    boton1 = tk.Button(ventana, text="Seleccionar",width=19,height=1, command=lambda: mostrarOpcionesNoInformada())
+    boton1.place(x=46, y=388)
 
-    boton2 = tk.Button(ventana, text="Seleccionar",width=19,height=1, command=lambda: mostrarOpcionesNoInformada())
-    boton2.place(x=46, y=388)
+    boton2 = tk.Button(ventana, text="Seleccionar",width=19,height=1, command=lambda: mostrarOpcionesInformada())
+    boton2.place(x=46, y=220)   
 
     agregarImagenMenu("Opciones")
+
+# def mostrarOpcionesNoInformada():
+#     global lienzo, OpcionesImg
+#     global boton1, boton2, boton3, botonVolver
+#     global boton3, boton4, boton5
+
+#     destruirBotones()
+
+#     boton3 = tk.Button(ventana, text="Seleccionar",width=19,height=1, command=lambda: generarMovimientosAmplitud())
+#     boton3.place(x=47, y=160)
+
+#     boton4 = tk.Button(ventana, text="Seleccionar",width=19,height=1, command=lambda: generarMovimientosCosto())
+#     boton4.place(x=47, y=327)
+
+#     boton5 = tk.Button(ventana, text="Seleccionar",width=19,height=1, command=lambda: generarMovimientosProfundidad())
+#     boton5.place(x=47, y=497)
+
+#     botonVolver = tk.Button(ventana, text="Volver",width=19,height=1, command=lambda: mostrarOpcionesIniciales())
+#     botonVolver.place(x=47, y=600)
+
+#     agregarImagenMenu("NoInformadaOpciones")
 
 def mostrarOpcionesNoInformada():
     global lienzo, OpcionesImg
@@ -277,13 +332,13 @@ def mostrarOpcionesNoInformada():
     boton4 = tk.Button(ventana, text="Seleccionar",width=19,height=1, command=lambda: generarMovimientosCosto())
     boton4.place(x=47, y=327)
 
-    boton5 = tk.Button(ventana, text="Seleccionar",width=19,height=1, command=lambda: mensaje("Profundidad"))
+    boton5 = tk.Button(ventana, text="Seleccionar",width=19,height=1, command=lambda: generarMovimientosProfundidad())
     boton5.place(x=47, y=497)
 
     botonVolver = tk.Button(ventana, text="Volver",width=19,height=1, command=lambda: mostrarOpcionesIniciales())
     botonVolver.place(x=47, y=600)
 
-    agregarImagenMenu("NoInformadaOpciones")
+    agregarImagenMenu("NoInformadaOpciones")    
 
 def mostrarOpcionesInformada():
     
@@ -295,7 +350,7 @@ def mostrarOpcionesInformada():
     boton1 = tk.Button(ventana, text="Seleccionar",width=19,height=1, command=lambda: mensaje("Avara"))
     boton1.place(x=46, y=220)
 
-    boton2 = tk.Button(ventana, text="Seleccionar",width=19,height=1, command=lambda: mensaje("A*"))
+    boton2 = tk.Button(ventana, text="Seleccionar",width=19,height=1, command=lambda: generarMovimientosA_Estrella())
     boton2.place(x=46, y=388)
 
     botonVolver = tk.Button(ventana, text="Volver",width=19,height=1, command=lambda: mostrarOpcionesIniciales())

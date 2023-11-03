@@ -2,16 +2,17 @@ import copy
 import time
 from Reader import get_matriz
 tiempo_inicio = time.time()
-def agente():
+def agente_profundidad():
     
     matriz_inicial = get_matriz()
 
-    cola_inicial = {
+    pila_inicial = {
         "matriz":matriz_inicial,
         "costo": 0
     }
-    cola = []
+    pila = []
     nodos = []
+    recorrido = []
 
 
     def encontrar_camino(ultimo_nodo):
@@ -45,7 +46,7 @@ def agente():
     agente = matriz_inicial[posicion_actual[0]][posicion_actual[1]]
     pos_hidrante = encontrar_posicion(matriz_inicial,6)
 
-
+    
 
     nodos.append({"padre":{
                         "pos":None,
@@ -60,12 +61,14 @@ def agente():
                         "posicion":posicion_actual,
                         "profundidad":0
                     })
+    
+    recorrido.append(posicion_actual)
 
 #INICIO MOVER_NUMERO
 
-    def mover_numero(_cola, padre,n, direccion):
+    def mover_numero(_pila, padre,n, direccion):
 
-        matriz = _cola["matriz"]
+        matriz = _pila["matriz"]
         padre= copy.deepcopy(padre)
         posicion_actual = encontrar_posicion(matriz, 5)
         posicion_padre = padre["padre"]["pos"]
@@ -101,14 +104,16 @@ def agente():
             "derecha": (0, 1),
         }
         # Calcular la nueva posición
-        desplazamiento = desplazamientos.get(direccion)
-
-
+        desplazamiento = desplazamientos.get(direccion)       
 
 
         if desplazamiento:
             nueva_fila = fila + desplazamiento[0]
             nueva_columna = columna + desplazamiento[1]
+
+
+            if((nueva_fila,nueva_columna) in recorrido):
+                return True
 
             if( 0 <= nueva_fila < len(matriz) and
                 0 <= nueva_columna < len(matriz[nueva_fila]) and
@@ -128,7 +133,7 @@ def agente():
                                 "desplazamiento":direccion,
                                 "posicion":(nueva_fila,nueva_columna)
                                 ,"profundidad":profundidad + 1})
-                    cola.append({"matriz":matriz,"costo":costo_actual + costo,"nodo_actual":len(nodos)-1})
+                    pila.insert(0,{"matriz":matriz,"costo":costo_actual + costo,"nodo_actual":len(nodos)-1})
                     return (nueva_fila,nueva_columna)
 
                 if(
@@ -152,7 +157,8 @@ def agente():
                                     ,"posicion":(nueva_fila,nueva_columna)
                                     ,"profundidad":profundidad + 1
                                     })
-                    cola.append({"matriz":matriz,"costo":costo_actual + costo,"nodo_actual":len(nodos)-1})
+                    pila.insert(0,{"matriz":matriz,"costo":costo_actual + costo,"nodo_actual":len(nodos)-1})
+                    recorrido.clear()
                     return True#(nueva_fila,nueva_columna)
 
                 if(
@@ -170,7 +176,8 @@ def agente():
                                     ,"posicion":(nueva_fila,nueva_columna)
                                     ,"profundidad":profundidad + 1
                                     })
-                    cola.append({"matriz":matriz,"costo":costo_actual + costo,"nodo_actual":len(nodos)-1})
+                    pila.insert(0,{"matriz":matriz,"costo":costo_actual + costo,"nodo_actual":len(nodos)-1})
+                    recorrido.clear()
                     return (nueva_fila,nueva_columna)
                 elif(
                     matriz[nueva_fila][nueva_columna] == fuego and
@@ -187,7 +194,8 @@ def agente():
                                     "posicion":(nueva_fila,nueva_columna)
                                     ,"profundidad":profundidad + 1
                                     })
-                    cola.append({"matriz":matriz,"costo":costo_actual + costo,"nodo_actual":len(nodos)-1})
+                    pila.insert(0,{"matriz":matriz,"costo":costo_actual + costo,"nodo_actual":len(nodos)-1})
+                    recorrido.clear()
                     return (nueva_fila,nueva_columna)
                 if(
                     matriz[nueva_fila][nueva_columna] == fuego and
@@ -204,7 +212,8 @@ def agente():
                                     "desplazamiento":direccion,
                                     "posicion":(nueva_fila,nueva_columna)
                                     ,"profundidad":profundidad + 1})
-                    cola.append({"matriz":matriz,"costo":costo_actual + costo,"nodo_actual":len(nodos)-1})
+                    pila.insert(0,{"matriz":matriz,"costo":costo_actual + costo,"nodo_actual":len(nodos)-1})
+                    recorrido.clear()
                     return (nueva_fila,nueva_columna)
 
 
@@ -220,7 +229,8 @@ def agente():
                                     "desplazamiento":direccion,
                                     "posicion":(nueva_fila,nueva_columna)
                                     ,"profundidad":profundidad + 1})
-                    cola.append({"matriz":matriz,"costo":costo_actual + costo,"nodo_actual":len(nodos)-1})
+                    pila.insert(0,{"matriz":matriz,"costo":costo_actual + costo,"nodo_actual":len(nodos)-1})
+                    recorrido.clear()
                     return (nueva_fila,nueva_columna)
             # Verificar si la nueva posición está dentro de la matriz
                 if(
@@ -235,7 +245,8 @@ def agente():
                                     "desplazamiento":direccion,
                                     "posicion":(nueva_fila,nueva_columna)
                                     ,"profundidad":profundidad + 1})
-                    cola.append({"matriz":matriz,"costo":costo_actual + costo,"nodo_actual":len(nodos)-1})
+                    pila.insert(0,{"matriz":matriz,"costo":costo_actual + costo,"nodo_actual":len(nodos)-1})
+                    recorrido.clear()
                     return (nueva_fila,nueva_columna)
 
 
@@ -251,7 +262,7 @@ def agente():
                                 "desplazamiento":direccion,
                                 "posicion":(nueva_fila,nueva_columna)
                                 ,"profundidad":profundidad + 1})
-                    cola.append({"matriz":matriz,"costo":costo_actual + costo,"nodo_actual":len(nodos)-1})
+                    pila.insert(0,{"matriz":matriz,"costo":costo_actual + costo,"nodo_actual":len(nodos)-1})
                     return (nueva_fila,nueva_columna)
 
                 if(
@@ -266,7 +277,8 @@ def agente():
                                 "desplazamiento":direccion,
                                 "posicion":(nueva_fila,nueva_columna)
                                 ,"profundidad":profundidad + 1})
-                    cola.append({"matriz":matriz,"costo":costo_actual + costo,"nodo_actual":len(nodos)-1})
+                    pila.insert(0,{"matriz":matriz,"costo":costo_actual + costo,"nodo_actual":len(nodos)-1})
+                    recorrido.clear()
                     return (nueva_fila,nueva_columna)
                 elif(
                     estado_actual["cubeta"] == "2L" and
@@ -279,56 +291,57 @@ def agente():
                                 "desplazamiento":direccion,
                                 "posicion":(nueva_fila,nueva_columna)
                                 ,"profundidad":profundidad + 1})
-                    cola.append({"matriz":matriz,"costo":costo_actual + costo,"nodo_actual":len(nodos)-1})
+                    pila.insert(0,{"matriz":matriz,"costo":costo_actual + costo,"nodo_actual":len(nodos)-1})
                     return (nueva_fila,nueva_columna)
             return (nueva_fila,nueva_columna)
 
+    
 
-    matriz_abajo = mover_numero(copy.deepcopy(cola_inicial), nodos[0], 0,"abajo")
-    matriz_arriba = mover_numero(copy.deepcopy(cola_inicial), nodos[0], 0, "derecha")
-    matriz_izquierda = mover_numero(copy.deepcopy(cola_inicial), nodos[0],0, "arriba")
-    matriz_derecha = mover_numero(copy.deepcopy(cola_inicial),nodos[0], 0, "izquierda")
+    matriz_abajo = mover_numero(copy.deepcopy(pila_inicial), nodos[0], 0,"abajo")
+    matriz_arriba = mover_numero(copy.deepcopy(pila_inicial), nodos[0], 0, "derecha")
+    matriz_izquierda = mover_numero(copy.deepcopy(pila_inicial), nodos[0],0, "arriba")
+    matriz_derecha = mover_numero(copy.deepcopy(pila_inicial),nodos[0], 0, "izquierda")
 
+    
 
-    def llenar_cola(n, cola):
+    def llenar_pila(n, pila):
 
-        m = cola[0]
-        minimo = cola[0]["costo"]
-        index_cola = 0
+        
+        n = pila[0]["nodo_actual"]  
+        m = pila[0]
+        pila.pop(0)
+        recorrido.append(nodos[n]["posicion"])
+        
         index = 0
-        while True:
-
+        while True:      
+            
+            pila.pop(0)
+           
+            matriz_derecha = mover_numero(copy.deepcopy(m), nodos[n], n, "izquierda")
+            if not matriz_derecha:
+                return encontrar_camino(n)                 
+            
             matriz_abajo = mover_numero(copy.deepcopy(m), nodos[n], n, "abajo")
             if not matriz_abajo:
                 return encontrar_camino(n)
-
-            matriz_arriba = mover_numero(copy.deepcopy(m), nodos[n], n, "derecha")
-            if not matriz_arriba:
-                return encontrar_camino(n)
-
+            
             matriz_izquierda = mover_numero(copy.deepcopy(m), nodos[n], n, "arriba")
             if not matriz_izquierda:
                 return encontrar_camino(n)
-
-            matriz_derecha = mover_numero(copy.deepcopy(m), nodos[n], n, "izquierda")
-            if not matriz_derecha:
+            
+            matriz_arriba = mover_numero(copy.deepcopy(m), nodos[n], n, "derecha")
+            if not matriz_arriba:
                 return encontrar_camino(n)
-
-            cola.pop(index_cola)
-            n = cola[0]["nodo_actual"]
-            m = cola[0]
-            minimo = cola[0]["costo"]
-            index_cola = 0
-
-            for i in range(len(cola)):                
-                if cola[i]["costo"] < minimo:
-                    minimo = cola[i]["costo"]
-                    n = cola[i]["nodo_actual"]
-                    m = cola[i]
-                    minimo = cola[i]["costo"]
-                    index_cola = i
+            
+            
+            
+            n = pila[0]["nodo_actual"]
+            recorrido.append(nodos[n]["posicion"])            
+            m = pila[0]            
+            index+=1
     
-    camino = llenar_cola(1,cola)  
+    camino = llenar_pila(0,pila)  
+    print(recorrido)
     ultimo_nodo = nodos[len(nodos)-1]
     tiempo_fin = time.time()
     tiempo_ejecucion = (tiempo_fin - tiempo_inicio) 
@@ -340,5 +353,15 @@ def agente():
        "profundidad_arbol": ultimo_nodo["profundidad"],
        "tiempo_computo": str( minutos) +":"+str(segundos)  + " minutos"
     }
-    print(reporte)      
+    #print(reporte)  
+    # print(nodos[1])
+    # print(nodos[2])
+    # print(nodos[3])    
+    # print(nodos[4])
+    # print(nodos[5])
+    # print(nodos[6])
+    
     return {"camino":camino,"reporte":reporte}
+
+print(agente_profundidad()["camino"])
+
