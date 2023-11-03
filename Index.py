@@ -64,7 +64,7 @@ def cambiarPosicionRaton(mapa,condicionActualRaton, posicionRaton):
         mapa[fila][columna] = 0
         mapa[fila][columna + 1] = 2
     elif(condicionActualRaton[5] == 5):
-        print("Hola")
+        print("condicionActualRaton[5] == 5  da true")
     else:
         mapa[fila][columna] = 0
         mapa[fila + 1][columna] = 2

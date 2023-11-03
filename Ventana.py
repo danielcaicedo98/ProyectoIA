@@ -2,6 +2,7 @@ import tkinter as tk
 from PIL import Image, ImageTk
 from Amplitud import agente_amplitud
 import time
+from Avara import agente_avara
 from CostoUniforme import agente
 from A_Estrella import agente_a_estrella
 
@@ -253,6 +254,24 @@ def generarMovimientos_a_estrella():
     identificarMovimientosCompletos()
     mostrarOpcionesIniciales()
 
+def generarMovimientos_avara():
+    # mensaje("avara")
+    global listaMovimientos
+    global lienzo
+    print(1)
+    destruirBotones()
+    sprites = crearSprites()
+    dibujarSprites(sprites)
+    print(2)
+
+    #cicloBombero(mapa)
+    agente_avara1 = agente_avara()
+    #print[agente_costo["reporte"]]
+    listaMovimientos = [agente_avara1["camino"]]
+    print("Lista movimientos: ", listaMovimientos)
+    identificarMovimientosCompletos()
+    mostrarOpcionesIniciales()
+
 
 
 def eliminarObjeto(fila, columna):
@@ -310,7 +329,7 @@ def mostrarOpcionesInformada():
 
     destruirBotones()
 
-    boton1 = tk.Button(ventana, text="Seleccionar",width=19,height=1, command=lambda: mensaje("Avara"))
+    boton1 = tk.Button(ventana, text="Seleccionar",width=19,height=1, command=lambda: generarMovimientos_avara())
     boton1.place(x=46, y=220)
 
     boton2 = tk.Button(ventana, text="Seleccionar",width=19,height=1, command=lambda: generarMovimientos_a_estrella())
@@ -329,7 +348,7 @@ def agregarImagenMenu(Imagen):
     OpcionesImg = ImageTk.PhotoImage(opciones)
     imagen = lienzo.create_image(0,0, anchor=tk.NW, image=OpcionesImg)
     lienzo.lift(imagen)
-    print("hola")
+    
 
 
 def destruirBotones():

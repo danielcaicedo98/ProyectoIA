@@ -2,7 +2,7 @@ import copy
 import time
 from Reader import get_matriz
 tiempo_inicio = time.time()
-def agente_a_estrella():
+def agente_avara():
     
     matriz_inicial = get_matriz()
 
@@ -47,7 +47,7 @@ def agente_a_estrella():
     def calcular_distancia_manhattan(punto1, punto2):
         return abs(punto1[0] - punto2[0]) + abs(punto1[1] - punto2[1])
 
-    def manhattan(matriz, primer_numero, segundo_numero):
+    def aplicar_heuristica(matriz, primer_numero, segundo_numero):
         posiciones_primer_numero = []
         posiciones_segundo_numero = []
         
@@ -69,7 +69,17 @@ def agente_a_estrella():
             for posicion_segundo_numero in posiciones_segundo_numero:
                 distancia = calcular_distancia_manhattan(posicion_primer_numero, posicion_segundo_numero)
                 distancia_minima = min(distancia, distancia_minima)
-        return distancia_minima
+        
+        
+        distancia_extra=0
+        for i in range(len(posiciones_primer_numero) - 1):
+            for j in range(i + 1, len(posiciones_primer_numero)):
+                distancia_extra = calcular_distancia_manhattan(posiciones_primer_numero[i], posiciones_primer_numero[j])
+                
+
+        # print("tot: ", distancia_minima + distancia_extra)
+        # print("minima: ", distancia_minima)   
+        return distancia_minima + distancia_extra
 
     nodos.append({"padre":{
                     "pos":None,
@@ -77,7 +87,7 @@ def agente_a_estrella():
                     "nodo":0,
                     },
                 "costo": 0,
-                "heuristica": manhattan(matriz_inicial,2,5),
+                "heuristica": aplicar_heuristica(matriz_inicial,2,5),
                 "estado":{
                     "cubeta": None,
                     "llena":False},
@@ -99,7 +109,7 @@ def agente_a_estrella():
         estado_actual = copy.deepcopy(estado_padre)
         estado_abuelo = padre["padre"]["estado"]
         profundidad = padre["profundidad"]
-        heuristica_actual = manhattan(matriz,fuego,agente)        
+        heuristica_actual = aplicar_heuristica(matriz,fuego,agente)        
         costo = 1
         if( estado_actual["cubeta"] == "1L" and
             estado_actual["llena"] == True): costo = 2
@@ -335,7 +345,7 @@ def agente_a_estrella():
     def llenar_cola(n, cola):
 
         m = cola[0]
-        minimo =  cola[0]["heuristica"] + cola[0]["costo"]        
+        minimo =  cola[0]["heuristica"] #+ cola[0]["costo"]        
         index_cola = 0
         
         while True:
@@ -359,18 +369,20 @@ def agente_a_estrella():
             cola.pop(index_cola)
             n = cola[0]["nodo_actual"]
             m = cola[0]
-            minimo =  cola[0]["heuristica"] + cola[0]["costo"]
+            minimo =  cola[0]["heuristica"] #+ cola[0]["costo"]
             index_cola = 0
-            
+
+            #print("minimo: ", minimo)
 
             for i in range(len(cola)):                              
-                if (cola[i]["costo"] + cola[i]["heuristica"] )< minimo:
-                    minimo = cola[i]["costo"]
+                if ( cola[i]["heuristica"] )< minimo:
+                    #minimo = cola[i]["costo"]
                     n = cola[i]["nodo_actual"]
                     m = cola[i]
-                    minimo = (cola[i]["costo"] + cola[i]["heuristica"] )
+                    minimo = ( cola[i]["heuristica"] )
                     index_cola = i
-                    print(minimo)
+                    # print(minimo)
+                   
     
     respuesta = llenar_cola(1,cola)  
     ultimo_nodo = nodos[respuesta["index"]]    
@@ -384,4 +396,4 @@ def agente_a_estrella():
        "tiempo_computo": str( minutos) +":"+str(segundos)  + " minutos"
     }    
     return {"camino":respuesta["camino"],"reporte":reporte}
-# agente_a_estrella()
+agente_avara()
