@@ -5,6 +5,8 @@ El siguiente proyecto está desrrollado por Estudiantes de la Universidad del Va
 
 Abrir una terminal y escribir **py main.py**
 
+# Descripción
+
 El propósito de este proyecto es implementar los siguientes algorítmos de búsqueda:
 * **Búsqueda no informada**
   * Amplitud
