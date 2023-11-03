@@ -1,6 +1,9 @@
 # ProyectoIA
 El siguiente proyecto está desrrollado por Estudiantes de la Universidad del Valle para el curso de Inteligencia Artificial.
 
+**Para ejecutar el proyecto** 
+Abrir una terminal y escribir **py main.py**
+
 El propósito de este proyecto es implementar los siguientes algorítmos de búsqueda:
 * **Búsqueda no informada**
   * Amplitud
