@@ -17,7 +17,9 @@ global mapa
 global listaMovimientos
 global listaObjetos
 global boton1, boton2, botonVolver
-global boton3, boton4, boton5, mapaBtn
+global boton3, boton4, boton5, mapaBtn, siguienteBtn,velocidad
+
+velocidad = 0.1
 
 
 
@@ -156,7 +158,7 @@ def generarVentana():
     global ventana
     global mapa
     global boton1, boton2, boton3, botonVolver
-    global boton3, boton4, boton5, mapaBtn
+    global boton3, boton4, boton5, mapaBtn, siguienteBtn
 
     #TODO Ahora hay que hacer que cuando le de click al boton el soldado empiece a moverse por el mapa
 
@@ -171,6 +173,7 @@ def generarVentana():
     boton4 = tk.Button(ventana, text="Volver",width=19,height=1, command=lambda: mensaje("boton4"))
     boton5 = tk.Button(ventana, text="Volver",width=19,height=1, command=lambda: mensaje("boton5"))
     mapaBtn = tk.Button(ventana, text="Volver",width=19,height=1, command=lambda: mensaje("mapaBtn"))
+    siguienteBtn = tk.Button(ventana, text="Volver",width=19,height=1, command=lambda: mensaje("SiguienteBtn"))
 
 
     lienzo = tk.Canvas(ventana, width=640, height=640)
@@ -192,7 +195,7 @@ def generarVentana():
     ventana.mainloop()
 
 def identificarMovimientosCompletos():
-    global listaMovimientos
+    global listaMovimientos, velocidad
 
     for lista_de_movimientos in listaMovimientos:
 
@@ -213,7 +216,7 @@ def identificarMovimientosCompletos():
             
             moverSoldado(0, direccion)
             eliminarObjeto(fila_actual, columna_actual)
-            time.sleep(1)
+            time.sleep(velocidad)
 
 # def generarMovimientosAmplitud():
 #     global listaMovimientos
@@ -252,6 +255,30 @@ def mostrarSeleccionarMapa():
 
     agregarImagenMenu("SeleccioneMapa")
 
+def mostrarDatosFinales(nodos, profundidad, tiempo):
+
+    global lienzo, OpcionesImg
+    global boton1, boton2, boton3, botonVolver
+    global boton3, boton4, boton5, mapaBtn, siguienteBtn
+
+    destruirBotones()
+
+
+    # Coloca las etiquetas en la ventana
+    """ lblNodos.pack() """
+
+
+    siguienteBtn = tk.Button(ventana, text="Continuar",width=19,height=1, command=lambda: mostrarSeleccionarMapa())
+    siguienteBtn.place(x=46, y=582)
+
+    agregarImagenMenu("DatosFinales")
+    lblNodos = lienzo.create_text(130, 123, text=nodos, fill="white", font=("Helvetica", 24))
+    lblProfundidad = lienzo.create_text(130, 295, text=profundidad, fill="white", font=("Helvetica", 24))
+    lblNTiempo = lienzo.create_text(130, 455, text=tiempo, fill="white", font=("Helvetica", 24))
+    lienzo.lift(lblNodos)
+    lienzo.lift(lblProfundidad)
+    lienzo.lift(lblNTiempo)
+
 def mostrarOpcionesIniciales():
     global lienzo, OpcionesImg
     global boton1, boton2, boton3, botonVolver
@@ -286,7 +313,13 @@ def generarMovimientosProfundidad():
     print("NODOS",profundidad["reporte"]["nodos_expandidos"])
     print("PROFUNDIDAD",profundidad["reporte"]["profundidad_arbol"])
     print("TIEMPO",profundidad["reporte"]["tiempo_computo"])
-    mostrarSeleccionarMapa()            
+
+
+    nodos = profundidad["reporte"]["nodos_expandidos"]
+    profundidad = profundidad["reporte"]["profundidad_arbol"]
+    tiempo = profundidad["reporte"]["tiempo_computo"]
+    mostrarDatosFinales(nodos, profundidad, tiempo)
+    #mostrarSeleccionarMapa()            
 
 def generarMovimientosAmplitud():
     global listaMovimientos
@@ -304,7 +337,12 @@ def generarMovimientosAmplitud():
     print("NODOS",agente_amplitud_interfaz["reporte"]["nodos_expandidos"])
     print("PROFUNDIDAD",agente_amplitud_interfaz["reporte"]["profundidad_arbol"])
     print("TIEMPO",agente_amplitud_interfaz["reporte"]["tiempo_computo"])
-    mostrarSeleccionarMapa()
+
+    nodos = agente_amplitud_interfaz["reporte"]["nodos_expandidos"]
+    profundidad = agente_amplitud_interfaz["reporte"]["profundidad_arbol"]
+    tiempo = agente_amplitud_interfaz["reporte"]["tiempo_computo"]
+    mostrarDatosFinales(nodos, profundidad, tiempo)
+    #mostrarSeleccionarMapa()
 
 def generarMovimientosCosto():
     global listaMovimientos
@@ -323,7 +361,12 @@ def generarMovimientosCosto():
     print("NODOS",agente_costo["reporte"]["nodos_expandidos"])
     print("PROFUNDIDAD",agente_costo["reporte"]["profundidad_arbol"])
     print("TIEMPO",agente_costo["reporte"]["tiempo_computo"])
-    mostrarSeleccionarMapa()
+
+    nodos = agente_costo["reporte"]["nodos_expandidos"]
+    profundidad = agente_costo["reporte"]["profundidad_arbol"]
+    tiempo = agente_costo["reporte"]["tiempo_computo"]
+    mostrarDatosFinales(nodos, profundidad, tiempo)
+    """ mostrarSeleccionarMapa() """
 
 def generarMovimientos_a_estrella():
     global listaMovimientos
@@ -342,7 +385,13 @@ def generarMovimientos_a_estrella():
     print("NODOS",agente_estrella["reporte"]["nodos_expandidos"])
     print("PROFUNDIDAD",agente_estrella["reporte"]["profundidad_arbol"])
     print("TIEMPO",agente_estrella["reporte"]["tiempo_computo"])
-    mostrarSeleccionarMapa()
+
+    nodos = agente_estrella["reporte"]["nodos_expandidos"]
+    profundidad = agente_estrella["reporte"]["profundidad_arbol"]
+    tiempo = agente_estrella["reporte"]["tiempo_computo"]
+    mostrarDatosFinales(nodos, profundidad, tiempo)
+
+    """ mostrarSeleccionarMapa() """
 
 def generarMovimientos_avara():
     # mensaje("avara")
@@ -363,7 +412,13 @@ def generarMovimientos_avara():
     print("NODOS",agente_avara1["reporte"]["nodos_expandidos"])
     print("PROFUNDIDAD",agente_avara1["reporte"]["profundidad_arbol"])
     print("TIEMPO",agente_avara1["reporte"]["tiempo_computo"])
-    mostrarSeleccionarMapa()
+
+    nodos = agente_avara1["reporte"]["nodos_expandidos"]
+    profundidad = agente_avara1["reporte"]["profundidad_arbol"]
+    tiempo = agente_avara1["reporte"]["tiempo_computo"]
+    mostrarDatosFinales(nodos, profundidad, tiempo)
+
+    """ mostrarSeleccionarMapa() """
 
 def abrirArchivos():
     global mapa
@@ -444,7 +499,7 @@ def agregarImagenMenu(Imagen):
 
 def destruirBotones():
     global boton1, boton2, boton3, botonVolver
-    global boton3, boton4, boton5, mapaBtn
+    global boton3, boton4, boton5, mapaBtn, siguienteBtn
     
     boton1.destroy()
     boton2.destroy()
@@ -452,6 +507,7 @@ def destruirBotones():
     boton4.destroy()
     boton5.destroy()
     mapaBtn.destroy()
+    siguienteBtn.destroy()
     botonVolver.destroy()
 
 
