@@ -69,7 +69,17 @@ def agente_a_estrella():
             for posicion_segundo_numero in posiciones_segundo_numero:
                 distancia = calcular_distancia_manhattan(posicion_primer_numero, posicion_segundo_numero)
                 distancia_minima = min(distancia, distancia_minima)
-        return distancia_minima
+        
+        
+        distancia_extra=0
+        for i in range(len(posiciones_primer_numero) - 1):
+            for j in range(i + 1, len(posiciones_primer_numero)):
+                distancia_extra = calcular_distancia_manhattan(posiciones_primer_numero[i], posiciones_primer_numero[j])
+                
+
+        # print("tot: ", distancia_minima + distancia_extra)
+        # print("minima: ", distancia_minima)   
+        return distancia_minima + distancia_extra
 
     nodos.append({"padre":{
                     "pos":None,
