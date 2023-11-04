@@ -1,14 +1,12 @@
 import tkinter as tk
 from PIL import Image, ImageTk
-from Amplitud import *
 import time
-from tkinter import filedialog
 from Amplitud import agente_amplitud
 from Avara import agente_avara
 from CostoUniforme import agente
 from A_Estrella import agente_a_estrella
 from Profundidad import agente_profundidad
-
+from tkinter import filedialog
 
 global ventana
 global soldier
@@ -160,7 +158,7 @@ def generarVentana():
 
     #TODO Ahora hay que hacer que cuando le de click al boton el soldado empiece a moverse por el mapa
 
-    
+    #mapa = mapaCompleto
 
     ventana = tk.Tk()
     ventana.title("Mostrar Primer Sprite")
@@ -172,24 +170,58 @@ def generarVentana():
     boton5 = tk.Button(ventana, text="Volver",width=19,height=1, command=lambda: mensaje("boton5"))
     mapaBtn = tk.Button(ventana, text="Volver",width=19,height=1, command=lambda: mensaje("mapaBtn"))
 
-
     lienzo = tk.Canvas(ventana, width=640, height=640)
     lienzo.pack()
 
-
-
-    """ mostrarOpcionesIniciales() """
     mostrarSeleccionarMapa()
-    
-
-    
-
-
-    #moverSoldado(lienzo)
+    #mostrarOpcionesIniciales()
 
     # Ejecutar la ventana
     ventana.geometry("640x640")
     ventana.mainloop()
+
+
+def mostrarSeleccionarMapa():
+
+    global lienzo, OpcionesImg
+    global boton1, boton2, boton3, botonVolver
+    global boton3, boton4, boton5, mapaBtn
+
+    destruirBotones()
+
+    mapaBtn = tk.Button(ventana, text="Mapa",width=19,height=1, command=lambda: abrirArchivos())
+    mapaBtn.place(x=46, y=328)
+
+    agregarImagenMenu("SeleccioneMapa")
+
+def abrirArchivos():
+    global mapa
+
+    archivo = filedialog.askopenfilename()
+
+    if archivo:
+        print(f"Archivo seleccionado: {archivo}")
+
+        try:
+            mapa = []
+            with open(archivo, 'r') as file:
+                for linea in file:
+                    lista_de_numeros = [int(numero) for numero in linea.split()]
+                    mapa.append(lista_de_numeros)
+
+            print("\n\nMAPA SECUNDARIA\n")
+            mostrarMapa(mapa)
+
+            mostrarOpcionesIniciales()
+        except Exception as e:
+            print(f"Error al abrir el archivo: {e}")
+    else:
+        print("Ningún archivo seleccionado.")
+
+
+    
+    return 0
+
 
 def identificarMovimientosCompletos():
     global listaMovimientos
@@ -214,61 +246,6 @@ def identificarMovimientosCompletos():
             moverSoldado(0, direccion)
             eliminarObjeto(fila_actual, columna_actual)
             time.sleep(1)
-
-# def generarMovimientosAmplitud():
-#     global listaMovimientos
-#     global lienzo
-
-#     destruirBotones()
-#     sprites = crearSprites()
-#     dibujarSprites(sprites)
-
-#     cicloBombero(mapa)
-#     listaMovimientos = getListaMovimientos()
-#     print("Lista movimientos: ", listaMovimientos)
-#     identificarMovimientosCompletos()
-#     mostrarSeleccionarMapa()
-
-
-def eliminarObjeto(fila, columna):
-    global listaObjetos
-    global lienzo
-
-    for sublista in listaObjetos:
-        if sublista[0] == fila and sublista[1] == columna:
-            lienzo.delete(sublista[2])
-
-
-def mostrarSeleccionarMapa():
-
-    global lienzo, OpcionesImg
-    global boton1, boton2, boton3, botonVolver
-    global boton3, boton4, boton5, mapaBtn
-
-    destruirBotones()
-
-    mapaBtn = tk.Button(ventana, text="Mapa",width=19,height=1, command=lambda: abrirArchivos())
-    mapaBtn.place(x=46, y=328)
-
-    agregarImagenMenu("SeleccioneMapa")
-
-def mostrarOpcionesIniciales():
-    global lienzo, OpcionesImg
-    global boton1, boton2, boton3, botonVolver
-    global boton3, boton4, boton5, mapaBtn
-    
-
-    destruirBotones()
-
-    boton1 = tk.Button(ventana, text="Seleccionar",width=19,height=1, command=lambda: mostrarOpcionesInformada())
-    boton1.place(x=46, y=220)
-
-    boton2 = tk.Button(ventana, text="Seleccionar",width=19,height=1, command=lambda: mostrarOpcionesNoInformada())
-    boton2.place(x=46, y=388)
-
-
-    agregarImagenMenu("Opciones")
-
 def generarMovimientosProfundidad():
     global listaMovimientos
     global lienzo
@@ -283,10 +260,7 @@ def generarMovimientosProfundidad():
     listaMovimientos = [profundidad["camino"]]
     print("Lista movimientos: ", listaMovimientos)
     identificarMovimientosCompletos()
-    print("NODOS",profundidad["reporte"]["nodos_expandidos"])
-    print("PROFUNDIDAD",profundidad["reporte"]["profundidad_arbol"])
-    print("TIEMPO",profundidad["reporte"]["tiempo_computo"])
-    mostrarSeleccionarMapa()            
+    mostrarOpcionesIniciales()               
 
 def generarMovimientosAmplitud():
     global listaMovimientos
@@ -301,10 +275,7 @@ def generarMovimientosAmplitud():
     listaMovimientos = [agente_amplitud_interfaz["camino"]]
     print("Lista movimientos: ", listaMovimientos)
     identificarMovimientosCompletos()
-    print("NODOS",agente_amplitud_interfaz["reporte"]["nodos_expandidos"])
-    print("PROFUNDIDAD",agente_amplitud_interfaz["reporte"]["profundidad_arbol"])
-    print("TIEMPO",agente_amplitud_interfaz["reporte"]["tiempo_computo"])
-    mostrarSeleccionarMapa()
+    mostrarOpcionesIniciales()
 
 def generarMovimientosCosto():
     global listaMovimientos
@@ -320,10 +291,7 @@ def generarMovimientosCosto():
     listaMovimientos = [agente_costo["camino"]]
     print("Lista movimientos: ", listaMovimientos)
     identificarMovimientosCompletos()
-    print("NODOS",agente_costo["reporte"]["nodos_expandidos"])
-    print("PROFUNDIDAD",agente_costo["reporte"]["profundidad_arbol"])
-    print("TIEMPO",agente_costo["reporte"]["tiempo_computo"])
-    mostrarSeleccionarMapa()
+    mostrarOpcionesIniciales()
 
 def generarMovimientos_a_estrella():
     global listaMovimientos
@@ -339,10 +307,7 @@ def generarMovimientos_a_estrella():
     listaMovimientos = [agente_estrella["camino"]]
     print("Lista movimientos: ", listaMovimientos)
     identificarMovimientosCompletos()
-    print("NODOS",agente_estrella["reporte"]["nodos_expandidos"])
-    print("PROFUNDIDAD",agente_estrella["reporte"]["profundidad_arbol"])
-    print("TIEMPO",agente_estrella["reporte"]["tiempo_computo"])
-    mostrarSeleccionarMapa()
+    mostrarSeleccionarMapa()()
 
 def generarMovimientos_avara():
     # mensaje("avara")
@@ -360,38 +325,36 @@ def generarMovimientos_avara():
     listaMovimientos = [agente_avara1["camino"]]
     print("Lista movimientos: ", listaMovimientos)
     identificarMovimientosCompletos()
-    print("NODOS",agente_avara1["reporte"]["nodos_expandidos"])
-    print("PROFUNDIDAD",agente_avara1["reporte"]["profundidad_arbol"])
-    print("TIEMPO",agente_avara1["reporte"]["tiempo_computo"])
     mostrarSeleccionarMapa()
 
-def abrirArchivos():
-    global mapa
-
-    archivo = filedialog.askopenfilename()
-
-    if archivo:
-        print(f"Archivo seleccionado: {archivo}")
-
-        try:
-            mapa = []
-            with open(archivo, 'r') as file:
-                for linea in file:
-                    lista_de_numeros = [int(numero) for numero in linea.split()]
-                    mapa.append(lista_de_numeros)
-
-            print("\n\nMAPA SECUNDARIA\n")
-            #mostrarMapa(mapa)
-
-            mostrarOpcionesIniciales()
-        except Exception as e:
-            print(f"Error al abrir el archivo: {e}")
-    else:
-        print("Ningún archivo seleccionado.")
 
 
+def eliminarObjeto(fila, columna):
+    global listaObjetos
+    global lienzo
+
+    for sublista in listaObjetos:
+        if sublista[0] == fila and sublista[1] == columna:
+            lienzo.delete(sublista[2])
+
+
+
+
+def mostrarOpcionesIniciales():
+    global lienzo, OpcionesImg
+    global boton1, boton2, boton3, botonVolver
+    global boton3, boton4, boton5
     
-    return 0
+
+    destruirBotones()
+
+    boton1 = tk.Button(ventana, text="Seleccionar",width=19,height=1, command=lambda: mostrarOpcionesInformada())
+    boton1.place(x=46, y=220)
+
+    boton2 = tk.Button(ventana, text="Seleccionar",width=19,height=1, command=lambda: mostrarOpcionesNoInformada())
+    boton2.place(x=46, y=388)
+
+    agregarImagenMenu("Opciones")
 
 def mostrarOpcionesNoInformada():
     global lienzo, OpcionesImg
@@ -440,18 +403,18 @@ def agregarImagenMenu(Imagen):
     OpcionesImg = ImageTk.PhotoImage(opciones)
     imagen = lienzo.create_image(0,0, anchor=tk.NW, image=OpcionesImg)
     lienzo.lift(imagen)
+    
 
 
 def destruirBotones():
     global boton1, boton2, boton3, botonVolver
-    global boton3, boton4, boton5, mapaBtn
+    global boton3, boton4, boton5
     
     boton1.destroy()
     boton2.destroy()
     boton3.destroy()
     boton4.destroy()
     boton5.destroy()
-    mapaBtn.destroy()
     botonVolver.destroy()
 
 

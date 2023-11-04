@@ -327,11 +327,14 @@ def agente_profundidad():
             
             matriz_izquierda = mover_numero(copy.deepcopy(m), nodos[n], n, "arriba")
             if not matriz_izquierda:
-                return encontrar_camino(n)
+                return encontrar_camino(n)      
             
             matriz_arriba = mover_numero(copy.deepcopy(m), nodos[n], n, "derecha")
             if not matriz_arriba:
                 return encontrar_camino(n)
+            
+
+            
             
             
             
@@ -363,5 +366,5 @@ def agente_profundidad():
     
     return {"camino":camino,"reporte":reporte}
 
-print(agente_profundidad()["camino"])
+print(agente_profundidad()["reporte"]["profundidad_arbol"])
 

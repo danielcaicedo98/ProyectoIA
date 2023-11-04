@@ -56,7 +56,8 @@ def agente_amplitud():
                         "cubeta": None,
                         "llena":False},
                         "desplazamiento":None,
-                        "posicion":posicion_actual
+                        "posicion":posicion_actual,
+                        "profundidad":0
                     })
 
     def mover_numero(_cola, padre,n, direccion):   
@@ -70,6 +71,7 @@ def agente_amplitud():
         estado_padre = padre["estado"]
         estado_actual = copy.deepcopy(estado_padre)
         estado_abuelo = padre["padre"]["estado"]      
+        profundidad = padre["profundidad"]
 
         # Variables que manejan el costo de cada paso de acuerdo a lo llena 
         # que vaya la cubeta
@@ -121,7 +123,8 @@ def agente_amplitud():
                     matriz[nueva_fila][nueva_columna] = agente
                     nodos.append({"padre":{"pos":posicion_actual,"estado":estado_padre,"nodo":n},"costo":costo_actual + costo, "estado":estado_actual,
                                 "desplazamiento":direccion,
-                                "posicion":(nueva_fila,nueva_columna)})
+                                "posicion":(nueva_fila,nueva_columna)
+                                ,"profundidad":profundidad + 1})
                     cola.append({"matriz":matriz,"costo":costo_actual + costo})
                     return (nueva_fila,nueva_columna)
 
@@ -142,8 +145,9 @@ def agente_amplitud():
                                            }
                                     ,"costo":costo_actual + costo 
                                     , "estado":estado_actual
-                                    ,"desplazamiento":direccion
-                                    ,"posicion":(nueva_fila,nueva_columna)})
+                                    ,"desplazamiento":direccion,
+                                    "posicion":(nueva_fila,nueva_columna)
+                                ,"profundidad":profundidad + 1})
                     cola.append({"matriz":matriz,"costo":costo_actual + costo})                                       
                     return True#(nueva_fila,nueva_columna)  
 
@@ -159,7 +163,8 @@ def agente_amplitud():
                                     ,"costo":costo_actual + costo,
                                     "estado":estado_actual,
                                     "desplazamiento":direccion,
-                                    "posicion":(nueva_fila,nueva_columna)})
+                                    "posicion":(nueva_fila,nueva_columna)
+                                ,"profundidad":profundidad + 1})
                     cola.append({"matriz":matriz,"costo":costo_actual + costo})  
                     return (nueva_fila,nueva_columna)
                 elif(                
@@ -174,7 +179,8 @@ def agente_amplitud():
                                     ,"costo":costo_actual + costo,
                                     "estado":estado_actual,
                                     "desplazamiento":direccion,
-                                    "posicion":(nueva_fila,nueva_columna)})
+                                    "posicion":(nueva_fila,nueva_columna)
+                                ,"profundidad":profundidad + 1})
                     cola.append({"matriz":matriz,"costo":costo_actual + costo})  
                     return (nueva_fila,nueva_columna)
                 if(                
@@ -190,7 +196,8 @@ def agente_amplitud():
                                     ,"costo":costo_actual + costo,
                                     "estado":estado_actual,
                                     "desplazamiento":direccion,
-                                    "posicion":(nueva_fila,nueva_columna)})
+                                    "posicion":(nueva_fila,nueva_columna)
+                                ,"profundidad":profundidad + 1})
                     cola.append({"matriz":matriz,"costo":costo_actual + costo})  
                     return (nueva_fila,nueva_columna)
 
@@ -205,7 +212,8 @@ def agente_amplitud():
                     matriz[nueva_fila][nueva_columna] = agente
                     nodos.append({"padre":{"pos":posicion_actual,"estado":estado_padre,"nodo":n},"costo":costo_actual + costo , "estado":estado_actual,
                                     "desplazamiento":direccion,
-                                    "posicion":(nueva_fila,nueva_columna)})
+                                    "posicion":(nueva_fila,nueva_columna)
+                                ,"profundidad":profundidad + 1})
                     cola.append({"matriz":matriz,"costo":costo_actual + costo})
                     return (nueva_fila,nueva_columna)
             # Verificar si la nueva posición está dentro de la matriz
@@ -219,7 +227,8 @@ def agente_amplitud():
                     matriz[nueva_fila][nueva_columna] = agente
                     nodos.append({"padre":{"pos":posicion_actual,"estado":estado_padre,"nodo":n},"costo":costo_actual + costo, "estado":estado_actual,
                                     "desplazamiento":direccion,
-                                    "posicion":(nueva_fila,nueva_columna)})
+                                    "posicion":(nueva_fila,nueva_columna)
+                                ,"profundidad":profundidad + 1})
                     cola.append({"matriz":matriz,"costo":costo_actual + costo})
                     return (nueva_fila,nueva_columna)
 
@@ -234,7 +243,8 @@ def agente_amplitud():
                     matriz[nueva_fila][nueva_columna] = agente
                     nodos.append({"padre":{"pos":posicion_actual,"estado":estado_padre,"nodo":n},"costo":costo_actual + costo, "estado":estado_actual,
                                 "desplazamiento":direccion,
-                                "posicion":(nueva_fila,nueva_columna)})
+                                "posicion":(nueva_fila,nueva_columna)
+                                ,"profundidad":profundidad + 1})
                     cola.append({"matriz":matriz,"costo":costo_actual + costo})
                     return (nueva_fila,nueva_columna)
             
@@ -248,7 +258,8 @@ def agente_amplitud():
                     matriz[nueva_fila][nueva_columna] = agente
                     nodos.append({"padre":{"pos":posicion_actual,"estado":estado_padre,"nodo":n},"costo":costo_actual + costo, "estado":estado_actual,
                                 "desplazamiento":direccion,
-                                "posicion":(nueva_fila,nueva_columna)})
+                                "posicion":(nueva_fila,nueva_columna)
+                                ,"profundidad":profundidad + 1})
                     cola.append({"matriz":matriz,"costo":costo_actual + costo})
                     return (nueva_fila,nueva_columna)
                 elif(
@@ -260,7 +271,8 @@ def agente_amplitud():
                     matriz[nueva_fila][nueva_columna] = agente
                     nodos.append({"padre":{"pos":posicion_actual,"estado":estado_padre,"nodo":n},"costo":costo_actual + costo, "estado":estado_actual,
                                 "desplazamiento":direccion,
-                                "posicion":(nueva_fila,nueva_columna)})
+                                "posicion":(nueva_fila,nueva_columna)
+                                ,"profundidad":profundidad + 1})
                     cola.append({"matriz":matriz,"costo":costo_actual + costo})
                     return (nueva_fila,nueva_columna)  
             return (nueva_fila,nueva_columna)
@@ -306,7 +318,7 @@ def agente_amplitud():
     segundos = int(tiempo_ejecucion % 60)
     reporte = {
        "nodos_expandidos": len(nodos),
-       #"profundidad_arbol": ultimo_nodo["profundidad"],
+       "profundidad_arbol": ultimo_nodo["profundidad"],
        "tiempo_computo": str( minutos) +":"+str(segundos)  + " minutos"
     }
     print(reporte)      
