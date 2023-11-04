@@ -19,7 +19,7 @@ global listaObjetos
 global boton1, boton2, botonVolver
 global boton3, boton4, boton5, mapaBtn, siguienteBtn,velocidad
 
-velocidad = 0.1
+velocidad = 0.3
 
 
 
@@ -305,19 +305,20 @@ def generarMovimientosProfundidad():
     dibujarSprites(sprites)
 
     #cicloBombero(mapa)
-    profundidad = agente_profundidad()
+    profundidad1 = agente_profundidad()
     #print(agente_costo["reporte"])
-    listaMovimientos = [profundidad["camino"]]
+    listaMovimientos = [profundidad1["camino"]]
     print("Lista movimientos: ", listaMovimientos)
     identificarMovimientosCompletos()
-    print("NODOS",profundidad["reporte"]["nodos_expandidos"])
-    print("PROFUNDIDAD",profundidad["reporte"]["profundidad_arbol"])
-    print("TIEMPO",profundidad["reporte"]["tiempo_computo"])
+    print("NODOS",profundidad1["reporte"]["nodos_expandidos"])
+    print("PROFUNDIDAD",profundidad1["reporte"]["profundidad_arbol"])
+    print("TIEMPO",profundidad1["reporte"]["tiempo_computo"])
 
 
-    nodos = profundidad["reporte"]["nodos_expandidos"]
-    profundidad = profundidad["reporte"]["profundidad_arbol"]
-    tiempo = profundidad["reporte"]["tiempo_computo"]
+    nodos = profundidad1["reporte"]["nodos_expandidos"]
+    profundidad = profundidad1["reporte"]["profundidad_arbol"]
+    tiempo = profundidad1["reporte"]["tiempo_computo"]
+             #profundidad["reporte"]["tiempo_computo"]
     mostrarDatosFinales(nodos, profundidad, tiempo)
     #mostrarSeleccionarMapa()            
 
