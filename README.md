@@ -12,6 +12,15 @@ Abrir una terminal y escribir **py main.py** seleccionar un mapa y luego elegir 
 * Juan David Tovar - 2029032
 * Nelson Daniel Herrera - 1841270
 
+**Nuestra Interfaz Gráfica**
+
+Nuestros algoritmos funcionan como fue planteado en el problema, sin embargo **solamente para la interfaz gráfica** usamos diferentes representaciones para los objetos, sin embargo el funcionamiento de los algoritmos es el mismo.
+
+![image](https://github.com/danielcaicedo98/ProyectoIA/assets/61769073/f0e0f79b-f622-4576-9279-bd1ce09908c1)
+
+
+![image](https://github.com/danielcaicedo98/ProyectoIA/assets/61769073/38c6a21d-6d6a-4599-a6d9-feb509a0fa08)
+
 # Descripción
 
 El propósito de este proyecto es implementar los siguientes algorítmos de búsqueda:
