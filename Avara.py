@@ -345,7 +345,7 @@ def agente_avara():
     def llenar_cola(n, cola):
 
         m = cola[0]
-        minimo =  cola[0]["heuristica"] #+ cola[0]["costo"]        
+        minimo =  cola[0]["heuristica"]        
         index_cola = 0
         
         while True:
@@ -369,14 +369,14 @@ def agente_avara():
             cola.pop(index_cola)
             n = cola[0]["nodo_actual"]
             m = cola[0]
-            minimo =  cola[0]["heuristica"] #+ cola[0]["costo"]
+            minimo =  cola[0]["heuristica"] 
             index_cola = 0
 
             #print("minimo: ", minimo)
 
             for i in range(len(cola)):                              
                 if ( cola[i]["heuristica"] )< minimo:
-                    #minimo = cola[i]["costo"]
+                    
                     n = cola[i]["nodo_actual"]
                     m = cola[i]
                     minimo = ( cola[i]["heuristica"] )
