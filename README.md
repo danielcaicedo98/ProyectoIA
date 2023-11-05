@@ -3,7 +3,14 @@ El siguiente proyecto está desrrollado por Estudiantes de la Universidad del Va
 
 **Para ejecutar el proyecto**
 
-Abrir una terminal y escribir **py main.py**
+Abrir una terminal y escribir **py main.py** seleccionar un mapa y luego elegir el algoritmo que desea implementar
+
+**Integrantes**
+
+* Julian Alvarez -  1840786
+* Daniel Caicedo - 1927033
+* Juan David Tovar - 2029032
+* Nelson Daniel Herrera - 1841270
 
 # Descripción
 
