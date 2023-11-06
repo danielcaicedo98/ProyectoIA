@@ -396,4 +396,4 @@ def agente_avara():
        "tiempo_computo": str( minutos) +":"+str(segundos)  + " minutos"
     }    
     return {"camino":respuesta["camino"],"reporte":reporte}
-agente_avara()
+#agente_avara()
