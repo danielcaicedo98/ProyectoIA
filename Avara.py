@@ -1,10 +1,10 @@
 import copy
 import time
-from Reader import get_matriz
-tiempo_inicio = time.time()
-def agente_avara():
-    
-    matriz_inicial = get_matriz()
+
+
+def agente_avara(_matriz):
+    tiempo_inicio = time.time()
+    matriz_inicial = _matriz
 
     cola_inicial = {
         "matriz":matriz_inicial,
@@ -396,4 +396,4 @@ def agente_avara():
        "tiempo_computo": str( minutos) +":"+str(segundos)  + " minutos"
     }    
     return {"camino":respuesta["camino"],"reporte":reporte}
-agente_avara()
+#agente_avara()

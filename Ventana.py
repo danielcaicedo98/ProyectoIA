@@ -8,7 +8,8 @@ from Avara import agente_avara
 from CostoUniforme import agente
 from A_Estrella import agente_a_estrella
 from Profundidad import agente_profundidad
-
+from Config import route
+from Reader import Reader
 
 global ventana
 global soldier
@@ -17,9 +18,9 @@ global mapa
 global listaMovimientos
 global listaObjetos
 global boton1, boton2, botonVolver
-global boton3, boton4, boton5, mapaBtn, siguienteBtn,velocidad
+global boton3, boton4, boton5, mapaBtn, siguienteBtn,velocidad,_matriz
 
-velocidad = 0.3
+velocidad = 0.4
 
 
 
@@ -173,6 +174,7 @@ def generarVentana():
     boton4 = tk.Button(ventana, text="Volver",width=19,height=1, command=lambda: mensaje("boton4"))
     boton5 = tk.Button(ventana, text="Volver",width=19,height=1, command=lambda: mensaje("boton5"))
     mapaBtn = tk.Button(ventana, text="Volver",width=19,height=1, command=lambda: mensaje("mapaBtn"))
+    print(mapaBtn)
     siguienteBtn = tk.Button(ventana, text="Volver",width=19,height=1, command=lambda: mensaje("SiguienteBtn"))
 
 
@@ -296,7 +298,7 @@ def mostrarOpcionesIniciales():
 
     agregarImagenMenu("Opciones")
 
-def generarMovimientosProfundidad():
+def generarMovimientosProfundidad(_m):
     global listaMovimientos
     global lienzo
 
@@ -305,7 +307,7 @@ def generarMovimientosProfundidad():
     dibujarSprites(sprites)
 
     #cicloBombero(mapa)
-    profundidad1 = agente_profundidad()
+    profundidad1 = agente_profundidad(_m)
     #print(agente_costo["reporte"])
     listaMovimientos = [profundidad1["camino"]]
     print("Lista movimientos: ", listaMovimientos)
@@ -322,7 +324,8 @@ def generarMovimientosProfundidad():
     mostrarDatosFinales(nodos, profundidad, tiempo)
     #mostrarSeleccionarMapa()            
 
-def generarMovimientosAmplitud():
+def generarMovimientosAmplitud(_m):
+    
     global listaMovimientos
     global lienzo
 
@@ -330,7 +333,7 @@ def generarMovimientosAmplitud():
     sprites = crearSprites()
     dibujarSprites(sprites)
 
-    agente_amplitud_interfaz = agente_amplitud()
+    agente_amplitud_interfaz = agente_amplitud(_m)
     print(agente_amplitud_interfaz["reporte"])
     listaMovimientos = [agente_amplitud_interfaz["camino"]]
     print("Lista movimientos: ", listaMovimientos)
@@ -343,9 +346,9 @@ def generarMovimientosAmplitud():
     profundidad = agente_amplitud_interfaz["reporte"]["profundidad_arbol"]
     tiempo = agente_amplitud_interfaz["reporte"]["tiempo_computo"]
     mostrarDatosFinales(nodos, profundidad, tiempo)
-    #mostrarSeleccionarMapa()
+        #mostrarSeleccionarMapa()
 
-def generarMovimientosCosto():
+def generarMovimientosCosto(_m):
     global listaMovimientos
     global lienzo
 
@@ -354,7 +357,7 @@ def generarMovimientosCosto():
     dibujarSprites(sprites)
 
     #cicloBombero(mapa)
-    agente_costo = agente()
+    agente_costo = agente(_m)
     #print[agente_costo["reporte"]]
     listaMovimientos = [agente_costo["camino"]]
     print("Lista movimientos: ", listaMovimientos)
@@ -369,7 +372,7 @@ def generarMovimientosCosto():
     mostrarDatosFinales(nodos, profundidad, tiempo)
     """ mostrarSeleccionarMapa() """
 
-def generarMovimientos_a_estrella():
+def generarMovimientos_a_estrella(_m):
     global listaMovimientos
     global lienzo
 
@@ -378,7 +381,7 @@ def generarMovimientos_a_estrella():
     dibujarSprites(sprites)
 
     #cicloBombero(mapa)
-    agente_estrella = agente_a_estrella()
+    agente_estrella = agente_a_estrella(_m)
     #print[agente_costo["reporte"]]
     listaMovimientos = [agente_estrella["camino"]]
     print("Lista movimientos: ", listaMovimientos)
@@ -394,7 +397,7 @@ def generarMovimientos_a_estrella():
 
     """ mostrarSeleccionarMapa() """
 
-def generarMovimientos_avara():
+def generarMovimientos_avara(_m):
     # mensaje("avara")
     global listaMovimientos
     global lienzo
@@ -405,7 +408,7 @@ def generarMovimientos_avara():
     print(2)
 
     #cicloBombero(mapa)
-    agente_avara1 = agente_avara()
+    agente_avara1 = agente_avara(_m)
     #print[agente_costo["reporte"]]
     listaMovimientos = [agente_avara1["camino"]]
     print("Lista movimientos: ", listaMovimientos)
@@ -423,12 +426,11 @@ def generarMovimientos_avara():
 
 def abrirArchivos():
     global mapa
-
-    archivo = filedialog.askopenfilename()
-
+    global route,_matriz    
+    archivo = filedialog.askopenfilename()  
     if archivo:
-        print(f"Archivo seleccionado: {archivo}")
-
+        _matriz = Reader(archivo)
+        print(f"Archivo seleccionado: {archivo}")       
         try:
             mapa = []
             with open(archivo, 'r') as file:
@@ -452,17 +454,17 @@ def abrirArchivos():
 def mostrarOpcionesNoInformada():
     global lienzo, OpcionesImg
     global boton1, boton2, boton3, botonVolver
-    global boton3, boton4, boton5
+    global boton3, boton4, boton5,_matriz
 
     destruirBotones()
 
-    boton3 = tk.Button(ventana, text="Seleccionar",width=19,height=1, command=lambda: generarMovimientosAmplitud())
+    boton3 = tk.Button(ventana, text="Seleccionar",width=19,height=1, command=lambda: generarMovimientosAmplitud(_matriz))
     boton3.place(x=47, y=160)
 
-    boton4 = tk.Button(ventana, text="Seleccionar",width=19,height=1, command=lambda: generarMovimientosCosto())
+    boton4 = tk.Button(ventana, text="Seleccionar",width=19,height=1, command=lambda: generarMovimientosCosto(_matriz))
     boton4.place(x=47, y=327)
 
-    boton5 = tk.Button(ventana, text="Seleccionar",width=19,height=1, command=lambda: generarMovimientosProfundidad())
+    boton5 = tk.Button(ventana, text="Seleccionar",width=19,height=1, command=lambda: generarMovimientosProfundidad(_matriz))
     boton5.place(x=47, y=497)
 
     botonVolver = tk.Button(ventana, text="Volver",width=19,height=1, command=lambda: mostrarOpcionesIniciales())
@@ -477,10 +479,10 @@ def mostrarOpcionesInformada():
 
     destruirBotones()
 
-    boton1 = tk.Button(ventana, text="Seleccionar",width=19,height=1, command=lambda: generarMovimientos_avara())
+    boton1 = tk.Button(ventana, text="Seleccionar",width=19,height=1, command=lambda: generarMovimientos_avara(_matriz))
     boton1.place(x=46, y=220)
 
-    boton2 = tk.Button(ventana, text="Seleccionar",width=19,height=1, command=lambda: generarMovimientos_a_estrella())
+    boton2 = tk.Button(ventana, text="Seleccionar",width=19,height=1, command=lambda: generarMovimientos_a_estrella(_matriz))
     boton2.place(x=46, y=388)
 
     botonVolver = tk.Button(ventana, text="Volver",width=19,height=1, command=lambda: mostrarOpcionesIniciales())

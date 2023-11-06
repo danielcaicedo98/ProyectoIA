@@ -1,11 +1,11 @@
 import copy
 import time
-from Reader import get_matriz
-tiempo_inicio = time.time()
-def agente():
-    
-    matriz_inicial = get_matriz()
 
+
+def agente(_matriz):
+    tiempo_inicio = time.time()
+    
+    matriz_inicial = _matriz
     cola_inicial = {
         "matriz":matriz_inicial,
         "costo": 0
