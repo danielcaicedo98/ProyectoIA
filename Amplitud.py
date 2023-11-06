@@ -1,8 +1,9 @@
 import copy
 import time
 #from Reader import get_matriz
-tiempo_inicio = time.time()
+
 def agente_amplitud(_matriz):
+    tiempo_inicio = time.time()
     matriz_inicial = _matriz
 
     cola_inicial = {
