@@ -366,5 +366,5 @@ def agente_profundidad():
     
     return {"camino":camino,"reporte":reporte}
 
-print(agente_profundidad()["reporte"]["profundidad_arbol"])
+#print(agente_profundidad()["reporte"]["profundidad_arbol"])
 
