@@ -314,14 +314,20 @@ def agente_amplitud(_matriz):
     ultimo_nodo = nodos[len(nodos)-1]
     tiempo_fin = time.time()
     tiempo_ejecucion = (tiempo_fin - tiempo_inicio) 
-    print(tiempo_ejecucion)
+    # print(tiempo_ejecucion)
     minutos = int(tiempo_ejecucion // 60)
-    segundos = int(tiempo_ejecucion % 60)
+    # segundos = round(tiempo_ejecucion) 
+    # print(segundos)
+    # milesimas  = round((tiempo_ejecucion - segundos) * 100)
+    # print(cola[len(cola)-1]["matriz"])
     reporte = {
        "nodos_expandidos": len(nodos),
        "profundidad_arbol": ultimo_nodo["profundidad"],
-       "tiempo_computo": str( minutos) +":"+str(segundos)  + " minutos"
+       "tiempo_computo": str( round(tiempo_ejecucion,4)) + " seg"
     }
     print(reporte)      
     return {"camino":camino,"reporte":reporte}    
 
+# from Reader import Reader
+# print(Reader('Prueba1.txt'))
+# agente_amplitud(Reader('Prueba1.txt'))

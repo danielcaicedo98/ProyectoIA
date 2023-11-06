@@ -1,3 +1,4 @@
+
 import copy
 import time
 
@@ -44,6 +45,7 @@ def agente(_matriz):
     posicion_actual = encontrar_posicion(matriz_inicial, 5)
     agente = matriz_inicial[posicion_actual[0]][posicion_actual[1]]
     pos_hidrante = encontrar_posicion(matriz_inicial,6)
+    pos_cub1  = encontrar_posicion(matriz_inicial,3)
 
 
 
@@ -66,6 +68,8 @@ def agente(_matriz):
     def mover_numero(_cola, padre,n, direccion):
 
         matriz = _cola["matriz"]
+        fil,col = pos_cub1
+        
         padre= copy.deepcopy(padre)
         posicion_actual = encontrar_posicion(matriz, 5)
         posicion_padre = padre["padre"]["pos"]
@@ -103,7 +107,7 @@ def agente(_matriz):
         # Calcular la nueva posición
         desplazamiento = desplazamientos.get(direccion)
 
-
+        
 
 
         if desplazamiento:
@@ -332,13 +336,14 @@ def agente(_matriz):
     ultimo_nodo = nodos[len(nodos)-1]
     tiempo_fin = time.time()
     tiempo_ejecucion = (tiempo_fin - tiempo_inicio) 
-    print(tiempo_ejecucion)
-    minutos = int(tiempo_ejecucion // 60)
-    segundos = int(tiempo_ejecucion % 60)
+    # print(tiempo_ejecucion)
+    print(cola[0])
+    #minutos = int(tiempo_ejecucion // 60)
+    # segundos = int(tiempo_ejecucion % 60)
     reporte = {
        "nodos_expandidos": len(nodos),
        "profundidad_arbol": ultimo_nodo["profundidad"],
-       "tiempo_computo": str( minutos) +":"+str(segundos)  + " minutos"
+       "tiempo_computo": str( round(tiempo_ejecucion,3)) + " seg"
     }
     print(reporte)      
     return {"camino":camino,"reporte":reporte}
