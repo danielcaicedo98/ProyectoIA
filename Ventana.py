@@ -19,6 +19,9 @@ global listaMovimientos
 global listaObjetos
 global boton1, boton2, botonVolver
 global boton3, boton4, boton5, mapaBtn, siguienteBtn,velocidad,_matriz
+global pos_esp,pos_sup
+global taked_esp
+taked_esp = False
 
 velocidad = 0.4
 
@@ -52,6 +55,7 @@ def dibujarSprites(imagen):
     global soldier
     global lienzo
     global mapa
+    global pos_esp,pos_sup
 
     x = 0
     y = 0
@@ -82,10 +86,13 @@ def dibujarSprites(imagen):
                 soldier = lienzo.create_image(posX, posY, anchor=tk.NW, image=imagen[4])
                 lienzo.lift(soldier)
             elif(mapa[fila][columna] == 3):
+                print("FILA COOOLL",fila,columna)
+                pos_esp = (fila, columna)
                 sword = lienzo.create_image(posX, posY, anchor=tk.NW, image=imagen[5])
                 lienzo.lift(sword)
                 agregarObjetoLista(fila,columna,sword)
             elif(mapa[fila][columna] == 4):
+                pos_sup = (fila, columna)
                 superSword = lienzo.create_image(posX, posY, anchor=tk.NW, image=imagen[6])
                 lienzo.lift(superSword)
                 agregarObjetoLista(fila,columna,superSword)
@@ -174,8 +181,7 @@ def generarVentana():
     boton3 = tk.Button(ventana, text="Volver",width=19,height=1, command=lambda: mensaje("boton3"))
     boton4 = tk.Button(ventana, text="Volver",width=19,height=1, command=lambda: mensaje("boton4"))
     boton5 = tk.Button(ventana, text="Volver",width=19,height=1, command=lambda: mensaje("boton5"))
-    mapaBtn = tk.Button(ventana, text="Volver",width=19,height=1, command=lambda: mensaje("mapaBtn"))
-    print(mapaBtn)
+    mapaBtn = tk.Button(ventana, text="Volver",width=19,height=1, command=lambda: mensaje("mapaBtn"))    
     siguienteBtn = tk.Button(ventana, text="Volver",width=19,height=1, command=lambda: mensaje("SiguienteBtn"))
 
 
@@ -199,6 +205,7 @@ def generarVentana():
 
 def identificarMovimientosCompletos():
     global listaMovimientos, velocidad
+    global taked_esp,pos_sup,pos_esp
 
     for lista_de_movimientos in listaMovimientos:
 
@@ -218,7 +225,21 @@ def identificarMovimientosCompletos():
 
             
             moverSoldado(0, direccion)
-            eliminarObjeto(fila_actual, columna_actual)
+            
+
+
+            fil_esp,col_esp = pos_esp
+            fil_sup,col_sup = pos_sup
+
+            if (fila_actual, columna_actual) == (fil_esp,col_esp) and (not taked_esp): 
+                taked_esp = True
+                eliminarObjeto(fila_actual, columna_actual)
+                print("TAKED",taked_esp)
+            if (fila_actual, columna_actual) == (fil_sup,col_sup) and (not taked_esp): 
+                taked_esp = True
+                eliminarObjeto(fila_actual, columna_actual)    
+            if (fila_actual, columna_actual) != (fil_esp,col_esp) and (fila_actual, columna_actual) != (fil_sup,col_sup):     
+                eliminarObjeto(fila_actual, columna_actual)
             time.sleep(velocidad)
 
 # def generarMovimientosAmplitud():
@@ -241,7 +262,7 @@ def eliminarObjeto(fila, columna):
     global lienzo
 
     for sublista in listaObjetos:
-        if sublista[0] == fila and sublista[1] == columna:
+        if sublista[0] == fila and sublista[1] == columna:           
             lienzo.delete(sublista[2])
 
 
