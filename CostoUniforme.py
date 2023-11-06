@@ -1,3 +1,4 @@
+
 import copy
 import time
 
@@ -333,12 +334,12 @@ def agente(_matriz):
     tiempo_fin = time.time()
     tiempo_ejecucion = (tiempo_fin - tiempo_inicio) 
     print(tiempo_ejecucion)
-    minutos = int(tiempo_ejecucion // 60)
-    segundos = int(tiempo_ejecucion % 60)
+    #minutos = int(tiempo_ejecucion // 60)
+    # segundos = int(tiempo_ejecucion % 60)
     reporte = {
        "nodos_expandidos": len(nodos),
        "profundidad_arbol": ultimo_nodo["profundidad"],
-       "tiempo_computo": str( minutos) +":"+str(segundos)  + " minutos"
+       "tiempo_computo": str( round(tiempo_ejecucion,3)) + " seg"
     }
     print(reporte)      
     return {"camino":camino,"reporte":reporte}

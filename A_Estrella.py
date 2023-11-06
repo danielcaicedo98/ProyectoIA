@@ -391,7 +391,7 @@ def agente_a_estrella(_matriz):
     reporte = {
        "nodos_expandidos": len(nodos),
        "profundidad_arbol": ultimo_nodo["profundidad"],
-       "tiempo_computo": str( minutos) +":"+str(segundos)  + " minutos"
+       "tiempo_computo": str( round(tiempo_ejecucion,3)) + " seg"
     }    
     return {"camino":respuesta["camino"],"reporte":reporte}
 # agente_a_estrella()
