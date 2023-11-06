@@ -50,6 +50,13 @@ def crearSprite(x,y):
 
     # Crear una etiqueta para mostrar la imagen
     return imagen_tk
+def encontrar_posicion(matriz, numero):
+        # Encuentra la posición actual del número en la matriz
+        for fila in range(len(matriz)):
+            for columna in range(len(matriz[fila])):
+                if matriz[fila][columna] == numero:
+                    return fila, columna
+        return None 
 
 def dibujarSprites(imagen):
     global soldier
@@ -63,6 +70,7 @@ def dibujarSprites(imagen):
     columnas = 10
     sprite_size = 64
     
+        
 
     for fila in range(filas):
         for columna in range(columnas):
@@ -86,13 +94,13 @@ def dibujarSprites(imagen):
                 soldier = lienzo.create_image(posX, posY, anchor=tk.NW, image=imagen[4])
                 lienzo.lift(soldier)
             elif(mapa[fila][columna] == 3):
-                print("FILA COOOLL",fila,columna)
-                pos_esp = (fila, columna)
+                
+                
                 sword = lienzo.create_image(posX, posY, anchor=tk.NW, image=imagen[5])
                 lienzo.lift(sword)
                 agregarObjetoLista(fila,columna,sword)
             elif(mapa[fila][columna] == 4):
-                pos_sup = (fila, columna)
+                
                 superSword = lienzo.create_image(posX, posY, anchor=tk.NW, image=imagen[6])
                 lienzo.lift(superSword)
                 agregarObjetoLista(fila,columna,superSword)
@@ -229,12 +237,11 @@ def identificarMovimientosCompletos():
 
 
             fil_esp,col_esp = pos_esp
-            fil_sup,col_sup = pos_sup
+            fil_sup,col_sup = pos_sup           
 
             if (fila_actual, columna_actual) == (fil_esp,col_esp) and (not taked_esp): 
                 taked_esp = True
-                eliminarObjeto(fila_actual, columna_actual)
-                print("TAKED",taked_esp)
+                eliminarObjeto(fila_actual, columna_actual)               
             if (fila_actual, columna_actual) == (fil_sup,col_sup) and (not taked_esp): 
                 taked_esp = True
                 eliminarObjeto(fila_actual, columna_actual)    
@@ -284,6 +291,8 @@ def mostrarDatosFinales(nodos, profundidad, tiempo):
     global lienzo, OpcionesImg
     global boton1, boton2, boton3, botonVolver
     global boton3, boton4, boton5, mapaBtn, siguienteBtn
+    global taked_esp 
+    taked_esp = False
 
     destruirBotones()
 
@@ -328,7 +337,8 @@ def generarMovimientosProfundidad(_m):
     sprites = crearSprites()
     dibujarSprites(sprites)
 
-    #cicloBombero(mapa)
+    
+
     try:
         profundidad1 = agente_profundidad(_m)
         #print(agente_costo["reporte"])
@@ -355,20 +365,27 @@ def generarMovimientosAmplitud(_m):
     destruirBotones()
     sprites = crearSprites()
     dibujarSprites(sprites)
+    try:
+        agente_amplitud_interfaz = agente_amplitud(_m)
+        print(agente_amplitud_interfaz["reporte"])
+        listaMovimientos = [agente_amplitud_interfaz["camino"]]
+        print("Lista movimientos: ", listaMovimientos)
+        identificarMovimientosCompletos()
+        print("NODOS",agente_amplitud_interfaz["reporte"]["nodos_expandidos"])
+        print("PROFUNDIDAD",agente_amplitud_interfaz["reporte"]["profundidad_arbol"])
+        print("TIEMPO",agente_amplitud_interfaz["reporte"]["tiempo_computo"])
 
-    agente_amplitud_interfaz = agente_amplitud(_m)
-    print(agente_amplitud_interfaz["reporte"])
-    listaMovimientos = [agente_amplitud_interfaz["camino"]]
-    print("Lista movimientos: ", listaMovimientos)
-    identificarMovimientosCompletos()
-    print("NODOS",agente_amplitud_interfaz["reporte"]["nodos_expandidos"])
-    print("PROFUNDIDAD",agente_amplitud_interfaz["reporte"]["profundidad_arbol"])
-    print("TIEMPO",agente_amplitud_interfaz["reporte"]["tiempo_computo"])
+        nodos = agente_amplitud_interfaz["reporte"]["nodos_expandidos"]
+        profundidad = agente_amplitud_interfaz["reporte"]["profundidad_arbol"]
+        tiempo = agente_amplitud_interfaz["reporte"]["tiempo_computo"]
+        
+    except Exception as e:                
+        mostrarDatosFinales("falla de algoritmo", "falla de algoritmo", "falla de algoritmo")
+    else:
+        mostrarDatosFinales(nodos, profundidad, tiempo)
 
-    nodos = agente_amplitud_interfaz["reporte"]["nodos_expandidos"]
-    profundidad = agente_amplitud_interfaz["reporte"]["profundidad_arbol"]
-    tiempo = agente_amplitud_interfaz["reporte"]["tiempo_computo"]
-    mostrarDatosFinales(nodos, profundidad, tiempo)
+    
+    
         #mostrarSeleccionarMapa()
 
 def generarMovimientosCosto(_m):
@@ -379,20 +396,28 @@ def generarMovimientosCosto(_m):
     sprites = crearSprites()
     dibujarSprites(sprites)
 
-    #cicloBombero(mapa)
-    agente_costo = agente(_m)
-    #print[agente_costo["reporte"]]
-    listaMovimientos = [agente_costo["camino"]]
-    print("Lista movimientos: ", listaMovimientos)
-    identificarMovimientosCompletos()
-    print("NODOS",agente_costo["reporte"]["nodos_expandidos"])
-    print("PROFUNDIDAD",agente_costo["reporte"]["profundidad_arbol"])
-    print("TIEMPO",agente_costo["reporte"]["tiempo_computo"])
+    try:
+        #cicloBombero(mapa)
+        agente_costo = agente(_m)
+        #print[agente_costo["reporte"]]
+        listaMovimientos = [agente_costo["camino"]]
+        print("Lista movimientos: ", listaMovimientos)
+        identificarMovimientosCompletos()
+        print("NODOS",agente_costo["reporte"]["nodos_expandidos"])
+        print("PROFUNDIDAD",agente_costo["reporte"]["profundidad_arbol"])
+        print("TIEMPO",agente_costo["reporte"]["tiempo_computo"])
 
-    nodos = agente_costo["reporte"]["nodos_expandidos"]
-    profundidad = agente_costo["reporte"]["profundidad_arbol"]
-    tiempo = agente_costo["reporte"]["tiempo_computo"]
-    mostrarDatosFinales(nodos, profundidad, tiempo)
+        nodos = agente_costo["reporte"]["nodos_expandidos"]
+        profundidad = agente_costo["reporte"]["profundidad_arbol"]
+        tiempo = agente_costo["reporte"]["tiempo_computo"]
+        
+    except Exception as e:                
+        mostrarDatosFinales("falla de algoritmo", "falla de algoritmo", "falla de algoritmo")
+    else:
+        mostrarDatosFinales(nodos, profundidad, tiempo)
+
+    
+    
     """ mostrarSeleccionarMapa() """
 
 def generarMovimientos_a_estrella(_m):
@@ -403,20 +428,29 @@ def generarMovimientos_a_estrella(_m):
     sprites = crearSprites()
     dibujarSprites(sprites)
 
-    #cicloBombero(mapa)
-    agente_estrella = agente_a_estrella(_m)
-    #print[agente_costo["reporte"]]
-    listaMovimientos = [agente_estrella["camino"]]
-    print("Lista movimientos: ", listaMovimientos)
-    identificarMovimientosCompletos()
-    print("NODOS",agente_estrella["reporte"]["nodos_expandidos"])
-    print("PROFUNDIDAD",agente_estrella["reporte"]["profundidad_arbol"])
-    print("TIEMPO",agente_estrella["reporte"]["tiempo_computo"])
+    try:
+            #print[agente_costo["reporte"]]
+        agente_estrella = agente_a_estrella(_m)
+        listaMovimientos = [agente_estrella["camino"]]
+        print("Lista movimientos: ", listaMovimientos)
+        identificarMovimientosCompletos()
+        print("NODOS",agente_estrella["reporte"]["nodos_expandidos"])
+        print("PROFUNDIDAD",agente_estrella["reporte"]["profundidad_arbol"])
+        print("TIEMPO",agente_estrella["reporte"]["tiempo_computo"])
 
-    nodos = agente_estrella["reporte"]["nodos_expandidos"]
-    profundidad = agente_estrella["reporte"]["profundidad_arbol"]
-    tiempo = agente_estrella["reporte"]["tiempo_computo"]
-    mostrarDatosFinales(nodos, profundidad, tiempo)
+        nodos = agente_estrella["reporte"]["nodos_expandidos"]
+        profundidad = agente_estrella["reporte"]["profundidad_arbol"]
+        tiempo = agente_estrella["reporte"]["tiempo_computo"]
+        
+    except Exception as e:                
+        mostrarDatosFinales("falla de algoritmo", "falla de algoritmo", "falla de algoritmo")
+    else:
+        mostrarDatosFinales(nodos, profundidad, tiempo)
+
+    #cicloBombero(mapa)
+    
+
+   
 
     """ mostrarSeleccionarMapa() """
 
@@ -427,32 +461,41 @@ def generarMovimientos_avara(_m):
     print(1)
     destruirBotones()
     sprites = crearSprites()
-    dibujarSprites(sprites)
-    print(2)
+    dibujarSprites(sprites)  
 
-    #cicloBombero(mapa)
-    agente_avara1 = agente_avara(_m)
-    #print[agente_costo["reporte"]]
-    listaMovimientos = [agente_avara1["camino"]]
-    print("Lista movimientos: ", listaMovimientos)
-    identificarMovimientosCompletos()
-    print("NODOS",agente_avara1["reporte"]["nodos_expandidos"])
-    print("PROFUNDIDAD",agente_avara1["reporte"]["profundidad_arbol"])
-    print("TIEMPO",agente_avara1["reporte"]["tiempo_computo"])
 
-    nodos = agente_avara1["reporte"]["nodos_expandidos"]
-    profundidad = agente_avara1["reporte"]["profundidad_arbol"]
-    tiempo = agente_avara1["reporte"]["tiempo_computo"]
-    mostrarDatosFinales(nodos, profundidad, tiempo)
+    try:
+            #cicloBombero(mapa)
+        agente_avara1 = agente_avara(_m)
+        #print[agente_costo["reporte"]]
+        listaMovimientos = [agente_avara1["camino"]]
+        print("Lista movimientos: ", listaMovimientos)
+        identificarMovimientosCompletos()
+        print("NODOS",agente_avara1["reporte"]["nodos_expandidos"])
+        print("PROFUNDIDAD",agente_avara1["reporte"]["profundidad_arbol"])
+        print("TIEMPO",agente_avara1["reporte"]["tiempo_computo"])
+
+        nodos = agente_avara1["reporte"]["nodos_expandidos"]
+        profundidad = agente_avara1["reporte"]["profundidad_arbol"]
+        tiempo = agente_avara1["reporte"]["tiempo_computo"]
+
+    except Exception as e:                
+        mostrarDatosFinales("falla de algoritmo", "falla de algoritmo", "falla de algoritmo")
+    else:
+        mostrarDatosFinales(nodos, profundidad, tiempo)
 
     """ mostrarSeleccionarMapa() """
 
 def abrirArchivos():
     global mapa
-    global route,_matriz    
+    global route,_matriz  
+    global pos_esp,pos_sup  
     archivo = filedialog.askopenfilename()  
+    
     if archivo:
         _matriz = Reader(archivo)
+        pos_sup = encontrar_posicion(_matriz,4)
+        pos_esp = encontrar_posicion(_matriz,3)
         print(f"Archivo seleccionado: {archivo}")       
         try:
             mapa = []
