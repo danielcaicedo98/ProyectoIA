@@ -64,6 +64,7 @@ def dibujarSprites(imagen):
         for columna in range(columnas):
             posX = x + columna * sprite_size
             posY = y + fila * sprite_size
+            
 
             lienzo.create_image(posX, posY, anchor=tk.NW, image=imagen[0])
 
@@ -307,21 +308,22 @@ def generarMovimientosProfundidad(_m):
     dibujarSprites(sprites)
 
     #cicloBombero(mapa)
-    profundidad1 = agente_profundidad(_m)
-    #print(agente_costo["reporte"])
-    listaMovimientos = [profundidad1["camino"]]
-    print("Lista movimientos: ", listaMovimientos)
-    identificarMovimientosCompletos()
-    print("NODOS",profundidad1["reporte"]["nodos_expandidos"])
-    print("PROFUNDIDAD",profundidad1["reporte"]["profundidad_arbol"])
-    print("TIEMPO",profundidad1["reporte"]["tiempo_computo"])
-
-
-    nodos = profundidad1["reporte"]["nodos_expandidos"]
-    profundidad = profundidad1["reporte"]["profundidad_arbol"]
-    tiempo = profundidad1["reporte"]["tiempo_computo"]
-             #profundidad["reporte"]["tiempo_computo"]
-    mostrarDatosFinales(nodos, profundidad, tiempo)
+    try:
+        profundidad1 = agente_profundidad(_m)
+        #print(agente_costo["reporte"])
+        listaMovimientos = [profundidad1["camino"]]
+        print("Lista movimientos: ", listaMovimientos)
+        identificarMovimientosCompletos()
+        print("NODOS",profundidad1["reporte"]["nodos_expandidos"])
+        print("PROFUNDIDAD",profundidad1["reporte"]["profundidad_arbol"])
+        print("TIEMPO",profundidad1["reporte"]["tiempo_computo"])
+        nodos = profundidad1["reporte"]["nodos_expandidos"]
+        profundidad = profundidad1["reporte"]["profundidad_arbol"]
+        tiempo = profundidad1["reporte"]["tiempo_computo"]
+    except Exception as e:                
+        mostrarDatosFinales("falla de algoritmo", "falla de algoritmo", "falla de algoritmo")
+    else:
+        mostrarDatosFinales(nodos, profundidad, tiempo)
     #mostrarSeleccionarMapa()            
 
 def generarMovimientosAmplitud(_m):

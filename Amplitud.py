@@ -319,6 +319,7 @@ def agente_amplitud(_matriz):
     # segundos = round(tiempo_ejecucion) 
     # print(segundos)
     # milesimas  = round((tiempo_ejecucion - segundos) * 100)
+    # print(cola[len(cola)-1]["matriz"])
     reporte = {
        "nodos_expandidos": len(nodos),
        "profundidad_arbol": ultimo_nodo["profundidad"],
