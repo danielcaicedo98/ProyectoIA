@@ -322,7 +322,5 @@ def agente_amplitud(_matriz):
        "tiempo_computo": str( minutos) +":"+str(segundos)  + " minutos"
     }
     print(reporte)      
-    return {"camino":camino,"reporte":reporte}           
+    return {"camino":camino,"reporte":reporte}    
 
-
-#print(agente_amplitud()["camino"])
