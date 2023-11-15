@@ -4,6 +4,7 @@ from Amplitud import *
 import time
 from tkinter import filedialog
 from Amplitud import agente_amplitud
+from Amplitud2 import *
 from Avara import agente_avara
 from CostoUniforme import agente
 from A_Estrella import agente_a_estrella
@@ -218,19 +219,7 @@ def identificarMovimientosCompletos():
             eliminarObjeto(fila_actual, columna_actual)
             time.sleep(velocidad)
 
-# def generarMovimientosAmplitud():
-#     global listaMovimientos
-#     global lienzo
 
-#     destruirBotones()
-#     sprites = crearSprites()
-#     dibujarSprites(sprites)
-
-#     cicloBombero(mapa)
-#     listaMovimientos = getListaMovimientos()
-#     print("Lista movimientos: ", listaMovimientos)
-#     identificarMovimientosCompletos()
-#     mostrarSeleccionarMapa()
 
 
 def eliminarObjeto(fila, columna):
@@ -343,6 +332,19 @@ def generarMovimientosAmplitud():
     tiempo = agente_amplitud_interfaz["reporte"]["tiempo_computo"]
     mostrarDatosFinales(nodos, profundidad, tiempo)
     #mostrarSeleccionarMapa()
+
+def generarMovimientosAmplitud2():
+    global listaMovimientos
+    global lienzo
+    global mapa
+    destruirBotones()
+    sprites = crearSprites()
+    dibujarSprites(sprites)
+    cicloBombero(mapa)
+    listaMovimientos = getListaMovimientos()
+    print("Lista movimientos: ", listaMovimientos)
+    identificarMovimientosCompletos()
+    mostrarDatosFinales("-", "-", "-")
 
 def generarMovimientosCosto():
     global listaMovimientos
