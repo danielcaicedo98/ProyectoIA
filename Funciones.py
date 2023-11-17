@@ -1,6 +1,7 @@
 from Clases import Bombero
 from Clases import Casilla
 from Clases import Nodo
+import math
 
 
 
@@ -153,3 +154,24 @@ def agregarElementosCola(cola, elementos):
         if elemento not in elementos_agregados:
             cola.append(elemento)
             elementos_agregados.add(elemento)
+
+
+## Sustentación fuegos mas alejados
+
+def calcularDistancia(punto1, punto2):
+    x1, y1 = punto1
+    x2, y2 = punto2
+    distancia = math.sqrt((x2 - x1)**2 + (y2 - y1)**2)
+    return distancia
+
+def fuegoMasAlejado(Posbombero, fuegos):
+    distanciaMax = 0
+    fuegoAlejado = None
+
+    for fuego in fuegos:
+        distancia = calcularDistancia(Posbombero, fuego)
+        if distancia > distanciaMax:
+            distanciaMax = distancia
+            fuegoAlejado = fuego
+
+    return fuegoAlejado

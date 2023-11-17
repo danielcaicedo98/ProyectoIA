@@ -9,6 +9,9 @@ global nodoDestino
 global listaNodos
 global listaMovimientosAmplitud
 
+
+global posicionInicialBombero
+
 def getListaMovimientos():
     return listaMovimientosAmplitud
 
@@ -17,8 +20,11 @@ listaMovimientosAmplitud = []
 def cicloBombero(mapa):
     global nodoPadreActual
     global listaNodos
+    global posicionInicialBombero
     casillas, bombero = crearPosiciones(mapa)
     reiniciarListaNodos(bombero)
+    posicionInicialBombero = bombero.posicion
+    print("Posicion Inicial Bombero: ", posicionInicialBombero)
 
     algoritmoAmplitud(casillas,bombero,mapa)
 
@@ -29,6 +35,7 @@ def algoritmoAmplitud(casillas, bombero: Bombero, mapa):
     global listaNodos
     global nodoPadreActual
     global listaMovimientosAmplitud
+    global posicionInicialBombero
 
     if(len(listaNodos) > 1):
         listaNodos = []
@@ -41,6 +48,10 @@ def algoritmoAmplitud(casillas, bombero: Bombero, mapa):
     posicionesFuegos = posicionesDelObjeto("Fuego", casillas)
     posicionesHidrantes = posicionesDelObjeto("Hidrante", casillas)
     posicionesCubetas = posicionesDelObjeto("Cubetas", casillas)
+
+    print("Fuegos: ", posicionesFuegos)
+
+    print("Fuegos mas alejados: ", fuegoMasAlejado(posicionInicialBombero, posicionesFuegos))
 
     if not bombero.getCubeta()[0]:
         posicionBalde = buscarCelda(mapa,colaDespuesBusqueda, posicionesCubetas)

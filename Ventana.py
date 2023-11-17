@@ -457,7 +457,7 @@ def mostrarOpcionesNoInformada():
 
     destruirBotones()
 
-    boton3 = tk.Button(ventana, text="Seleccionar",width=19,height=1, command=lambda: generarMovimientosAmplitud())
+    boton3 = tk.Button(ventana, text="Seleccionar",width=19,height=1, command=lambda: generarMovimientosAmplitud2())
     boton3.place(x=47, y=160)
 
     boton4 = tk.Button(ventana, text="Seleccionar",width=19,height=1, command=lambda: generarMovimientosCosto())
