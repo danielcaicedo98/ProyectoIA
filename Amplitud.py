@@ -53,8 +53,7 @@ def agente_amplitud(_matriz):
 
     def movimiento_caballo(_cola, n, direccion):        
 
-        if(_cola["profundidad"] + 1 == 3):
-            return False
+        
 
         matriz = _cola["matriz"]
         caballo_turno = _cola["jugador"]        
@@ -98,8 +97,8 @@ def agente_amplitud(_matriz):
 
             if( 0 <= nueva_fila < len(matriz) and
                 0 <= nueva_columna < len(matriz[nueva_fila]) and
-                matriz[nueva_fila][nueva_columna] != enemigo and
-                matriz[nueva_fila][nueva_columna] != casilla_tomada
+                matriz[nueva_fila][nueva_columna] != enemigo 
+              #  and matriz[nueva_fila][nueva_columna] != casilla_tomada
                 ):
 
                 matriz[fila][columna] = espacio_vacio
@@ -119,6 +118,7 @@ def agente_amplitud(_matriz):
                 })
 
                 print(profundidad + 1)
+                return
 
                 # #condicional en caso de que que caiga en una casilla vacía    
                 # if(matriz[nueva_fila][nueva_columna] == espacio_vacio):
@@ -189,7 +189,7 @@ def agente_amplitud(_matriz):
                 #         "profundidad": profundidad + 2
                 #     })
                 #     return
-                return
+                
             return
         return 
 
@@ -201,7 +201,7 @@ def agente_amplitud(_matriz):
         n = 0
         profundidad = 0
         caballo_turno = caballo_maquina
-        while cola :
+        while True:
         #while cola:
             m = cola[0]
             if (profundidad < m["profundidad"]):
@@ -212,7 +212,7 @@ def agente_amplitud(_matriz):
                     caballo_turno = caballo_maquina    
             #aux += 1
             m["jugador"] = caballo_turno
-            if m["profundidad"] + 1 == 3:
+            if m["profundidad"] + 1 == 4:
                 return
 
             # ADELANTE 
