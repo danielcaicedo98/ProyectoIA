@@ -1,4 +1,4 @@
-from Config import route
+#from Config import route
 from tkinter import filedialog
 
 def Reader(nombre_archivo):

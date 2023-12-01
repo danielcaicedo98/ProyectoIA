@@ -1,16 +1,33 @@
 import copy
 import time
-#from Reader import get_matriz
+from Reader import Reader
 
 def agente_amplitud(_matriz):
     tiempo_inicio = time.time()
+    
+    #Definicion de objetos del mapa
+    casilla_tomada = 5
+    espacio_vacio = 0
+    moneda_uno = 1
+    moneda_dos = 2   
+    caballo_maquina = 3   
+    caballo_jugador = 4
+    
+
+
     matriz_inicial = _matriz
 
-    cola_inicial = {
+    cola = [{
         "matriz":matriz_inicial,
-        "costo": 0
-    }
-    cola = []
+        "jugador": caballo_maquina,
+        "rama_min_max": "max",
+        "pocision_anterior": (0,0),
+        "pocision_actual": (0,0),
+        "beneficio_acumulado": 0,
+        "profundidad": 0,
+        "nodo_padre": None 
+    }]
+    #cola = []
     nodos = []
 
 
@@ -24,82 +41,56 @@ def agente_amplitud(_matriz):
         camino.reverse()   
         return camino
 
-
-
-
     def encontrar_posicion(matriz, numero):
         # Encuentra la posición actual del número en la matriz
         for fila in range(len(matriz)):
             for columna in range(len(matriz[fila])):
                 if matriz[fila][columna] == numero:
                     return fila, columna
-        return None
+        return None   
+
     
-    muro = 1
-    fuego = 2
-    cubeta_uno = 3
-    cubeta_dos = 4
-    hidrante = 6
 
-    posicion_actual = encontrar_posicion(matriz_inicial, 5)
-    agente = matriz_inicial[posicion_actual[0]][posicion_actual[1]]
-    pos_hidrante = encontrar_posicion(matriz_inicial,6)
+    def movimiento_caballo(_cola, n, direccion):        
 
-
-
-    nodos.append({"padre":{
-                        "pos":None,
-                        "estado":None,
-                        "nodo":0 
-                        },
-                    "costo": 0,
-                    "estado":{
-                        "cubeta": None,
-                        "llena":False},
-                        "desplazamiento":None,
-                        "posicion":posicion_actual,
-                        "profundidad":0
-                    })
-
-    def mover_numero(_cola, padre,n, direccion):   
+        if(_cola["profundidad"] + 1 == 3):
+            return False
 
         matriz = _cola["matriz"]
+        caballo_turno = _cola["jugador"]        
+        posicion_actual = encontrar_posicion(matriz, caballo_turno)    
+        rama_min_max = _cola["rama_min_max"]
+        beneficio = _cola["beneficio_acumulado"]
+        profundidad = _cola["profundidad"]
+        nodo_padre = _cola["nodo_padre"]
 
-        padre= copy.deepcopy(padre)
-        posicion_actual = encontrar_posicion(matriz, 5)
-        posicion_padre = padre["padre"]["pos"]
-        costo_actual = padre["costo"]
-        estado_padre = padre["estado"]
-        estado_actual = copy.deepcopy(estado_padre)
-        estado_abuelo = padre["padre"]["estado"]      
-        profundidad = padre["profundidad"]
-
-        # Variables que manejan el costo de cada paso de acuerdo a lo llena 
-        # que vaya la cubeta
-
-        costo = 1
-        if( estado_actual["cubeta"] == "1L" and
-            estado_actual["llena"] == True): costo = 2
-        
-        if(estado_actual["cubeta"] == "2L" and
-            estado_actual["llena"] == True): costo = 3        
-            
+        print(direccion)
 
         if not posicion_actual:
             return matriz  # Si no se encuentra el número, no se realiza ningún movimiento
         fila, columna = posicion_actual
         # Definir los desplazamientos para las cuatro direcciones
         desplazamientos = {
-            "arriba": (-1, 0),
-            "abajo": (1, 0),
-            "izquierda": (0, -1),
-            "derecha": (0, 1),
+            #desplazamiento en L atras
+            "atras_arriba_dos": (-2, -1),
+            "atras_arriba_una": (-1, -2),            
+            "atras_abajo_una": (1, -2),
+            "atras_abajo_dos": (2, -1),
+
+            #desplazamiento en L adelante
+            "adelante_abajo_dos": (2, 1),
+            "adelante_abajo_una": (1, 2),            
+            "adelante_arriba_una": (-1, 2),
+            "adelante_arriba_dos": (-2, 1),
+            
         }
         # Calcular la nueva posición
-        desplazamiento = desplazamientos.get(direccion)
+        desplazamiento = desplazamientos.get(direccion)    
 
-        
-
+        enemigo = caballo_maquina
+        #Verificar cuál es el contrincante
+        if(caballo_turno == caballo_maquina):
+            enemigo = caballo_jugador        
 
         if desplazamiento:
             nueva_fila = fila + desplazamiento[0]
@@ -107,227 +98,163 @@ def agente_amplitud(_matriz):
 
             if( 0 <= nueva_fila < len(matriz) and
                 0 <= nueva_columna < len(matriz[nueva_fila]) and
-                matriz[nueva_fila][nueva_columna] != muro ):
-
-                if (encontrar_posicion(matriz, 2) == None): 
-                    return False
-
-                    
-
-
-                if(                    
-                    estado_actual["llena"] == True and
-                    estado_abuelo["llena"] == False
-                ):                  
-                      
-                    matriz[fila][columna] = 0
-                    matriz[nueva_fila][nueva_columna] = agente
-                    nodos.append({"padre":{"pos":posicion_actual,"estado":estado_padre,"nodo":n},"costo":costo_actual + costo, "estado":estado_actual,
-                                "desplazamiento":direccion,
-                                "posicion":(nueva_fila,nueva_columna)
-                                ,"profundidad":profundidad + 1})
-                    cola.append({"matriz":matriz,"costo":costo_actual + costo})
-                    return (nueva_fila,nueva_columna)
-
-                if(                   
-                    (nueva_fila,nueva_columna) == pos_hidrante and
-                    estado_actual["llena"] == False and
-                    estado_actual["cubeta"] != None 
-                    #and (nueva_fila,nueva_columna) != posicion_padre
+                matriz[nueva_fila][nueva_columna] != enemigo and
+                matriz[nueva_fila][nueva_columna] != casilla_tomada
                 ):
+
+                matriz[fila][columna] = espacio_vacio
+                matriz[nueva_fila][nueva_columna] = caballo_turno               
+                print("condicional para movimiento en espacio vacio",caballo_turno)
+                print((fila,columna)) 
+
+                cola.append({
+                        "matriz":matriz,
+                        "jugador": caballo_turno,
+                        "rama_min_max": rama_min_max,
+                        "pocision_anterior": (fila,columna),
+                        "pocision_actual": (nueva_fila,nueva_columna),
+                        "beneficio_acumulado": beneficio,
+                        "profundidad": profundidad + 1, 
+                        "nodo_padre": n
+                })
+
+                print(profundidad + 1)
+
+                # #condicional en caso de que que caiga en una casilla vacía    
+                # if(matriz[nueva_fila][nueva_columna] == espacio_vacio):
                 
-                    estado_actual["llena"] = True
-                    matriz[fila][columna] = 0
-                    matriz[nueva_fila][nueva_columna] = agente
-                    nodos.append({"padre":{
-                                           "pos":posicion_actual,
-                                           "estado":estado_padre,
-                                           "nodo":n
-                                           }
-                                    ,"costo":costo_actual + costo 
-                                    , "estado":estado_actual
-                                    ,"desplazamiento":direccion,
-                                    "posicion":(nueva_fila,nueva_columna)
-                                ,"profundidad":profundidad + 1})
-                    cola.append({"matriz":matriz,"costo":costo_actual + costo})                                       
-                    return True#(nueva_fila,nueva_columna)  
-
-                if(                
-                    matriz[nueva_fila][nueva_columna] == fuego and
-                    estado_actual["cubeta"] == "2L" and
-                    estado_actual["llena"] == True
-                ):
-                    estado_actual["llena"] = "Mitad"
-                    matriz[fila][columna] = 0
-                    matriz[nueva_fila][nueva_columna] = agente
-                    nodos.append({"padre":{"pos":(nueva_fila,nueva_columna),"estado":estado_padre,"nodo":n}
-                                    ,"costo":costo_actual + costo,
-                                    "estado":estado_actual,
-                                    "desplazamiento":direccion,
-                                    "posicion":(nueva_fila,nueva_columna)
-                                ,"profundidad":profundidad + 1})
-                    cola.append({"matriz":matriz,"costo":costo_actual + costo})  
-                    return (nueva_fila,nueva_columna)
-                elif(                
-                    matriz[nueva_fila][nueva_columna] == fuego and
-                    estado_actual["cubeta"] == "2L" and
-                    estado_actual["llena"] == "Mitad"
-                ):
-                    estado_actual["llena"] = False
-                    matriz[fila][columna] = 0
-                    matriz[nueva_fila][nueva_columna] = agente
-                    nodos.append({"padre":{"pos":(nueva_fila,nueva_columna),"estado":estado_padre,"nodo":n}
-                                    ,"costo":costo_actual + costo,
-                                    "estado":estado_actual,
-                                    "desplazamiento":direccion,
-                                    "posicion":(nueva_fila,nueva_columna)
-                                ,"profundidad":profundidad + 1})
-                    cola.append({"matriz":matriz,"costo":costo_actual + costo})  
-                    return (nueva_fila,nueva_columna)
-                if(                
-                    matriz[nueva_fila][nueva_columna] == fuego and
-                    estado_actual["cubeta"] == "1L" and
-                    estado_actual["llena"] == True
-                ):
+                #     matriz[fila][columna] = espacio_vacio
+                #     matriz[nueva_fila][nueva_columna] = caballo_turno               
+                #     print("condicional para movimiento en espacio vacio")
+                #     print((nueva_fila,nueva_columna))      
                     
-                    estado_actual["llena"] = False
-                    matriz[fila][columna] = 0
-                    matriz[nueva_fila][nueva_columna] = agente
-                    nodos.append({"padre":{"pos":(nueva_fila,nueva_columna),"estado":estado_padre,"nodo":n}
-                                    ,"costo":costo_actual + costo,
-                                    "estado":estado_actual,
-                                    "desplazamiento":direccion,
-                                    "posicion":(nueva_fila,nueva_columna)
-                                ,"profundidad":profundidad + 1})
-                    cola.append({"matriz":matriz,"costo":costo_actual + costo})  
-                    return (nueva_fila,nueva_columna)
+                #     cola.append({
+                #         "matriz":matriz,
+                #         "jugador": caballo_jugador,
+                #         "rama_min_max": rama_min_max,
+                #         "pocision_anterior": (fila,columna),
+                #         "pocision_actual": (nueva_fila,nueva_columna),
+                #         "beneficio_acumulado": beneficio,
+                #         "profundidad": profundidad + 1, 
+                #         "nodo_padre": nodo_padre + 1
+                #     })
 
-
-
-                if(                    
-                    matriz[nueva_fila][nueva_columna] == cubeta_uno and
-                    estado_actual["cubeta"] == None #and (nueva_fila,nueva_columna) != fuego
-                ):
-                    estado_actual = {"cubeta": "1L","llena":False}
-                    matriz[fila][columna] = 0
-                    matriz[nueva_fila][nueva_columna] = agente
-                    nodos.append({"padre":{"pos":posicion_actual,"estado":estado_padre,"nodo":n},"costo":costo_actual + costo , "estado":estado_actual,
-                                    "desplazamiento":direccion,
-                                    "posicion":(nueva_fila,nueva_columna)
-                                ,"profundidad":profundidad + 1})
-                    cola.append({"matriz":matriz,"costo":costo_actual + costo})
-                    return (nueva_fila,nueva_columna)
-            # Verificar si la nueva posición está dentro de la matriz
-                if( 
-                    matriz[nueva_fila][nueva_columna] == cubeta_dos and
-                    estado_actual["cubeta"] == None
-                ):
+                #     nodos.append({
+                #         "matriz":matriz,
+                #         "jugador": caballo_jugador,
+                #         "rama_min_max": rama_min_max,
+                #         "pocision_anterior": (fila,columna),
+                #         "pocision_actual": (nueva_fila,nueva_columna),
+                #         "beneficio_acumulado": beneficio,
+                #         "profundidad": profundidad + 1 
+                #     })
+                #     return
                 
-                    estado_actual = {"cubeta": "2L","llena":False}
-                    matriz[fila][columna] = 0
-                    matriz[nueva_fila][nueva_columna] = agente
-                    nodos.append({"padre":{"pos":posicion_actual,"estado":estado_padre,"nodo":n},"costo":costo_actual + costo, "estado":estado_actual,
-                                    "desplazamiento":direccion,
-                                    "posicion":(nueva_fila,nueva_columna)
-                                ,"profundidad":profundidad + 1})
-                    cola.append({"matriz":matriz,"costo":costo_actual + costo})
-                    return (nueva_fila,nueva_columna)
+                # #Condicional para movimiento en casilla con moneda 
+                
+                # if(matriz[nueva_fila][nueva_columna] == moneda_uno):
+                
+                #     matriz[fila][columna] = espacio_vacio
+                #     matriz[nueva_fila][nueva_columna] = caballo_turno               
+                #     print("condicional para movimiento en moneda uno")
+                #     print((nueva_fila,nueva_columna))      
+                    
+                #     cola.append({
+                #         "matriz":matriz,
+                #         "jugador": caballo_jugador,
+                #         "rama_min_max": rama_min_max,
+                #         "pocision_anterior": (fila,columna),
+                #         "pocision_actual": (nueva_fila,nueva_columna),
+                #         "beneficio_acumulado": beneficio + 1,
+                #         "profundidad": profundidad + 1
+                #     })
+                #     return
+                
+                # #Condicional para movimiento en casilla con moneda 
 
-
-                if (                    
-                    (nueva_fila,nueva_columna) != posicion_padre and
-                    matriz[nueva_fila][nueva_columna] != fuego
-                ):
-                    # Mover el número a la nueva posición
-
-                    matriz[fila][columna] = 0
-                    matriz[nueva_fila][nueva_columna] = agente
-                    nodos.append({"padre":{"pos":posicion_actual,"estado":estado_padre,"nodo":n},"costo":costo_actual + costo, "estado":estado_actual,
-                                "desplazamiento":direccion,
-                                "posicion":(nueva_fila,nueva_columna)
-                                ,"profundidad":profundidad + 1})
-                    cola.append({"matriz":matriz,"costo":costo_actual + costo})
-                    return (nueva_fila,nueva_columna)
-            
-                if(
-                   
-                    estado_actual["cubeta"] == "1L" and
-                    estado_abuelo["cubeta"] == None and
-                    matriz[nueva_fila][nueva_columna] != fuego
-                ):
-                    matriz[fila][columna] = 0
-                    matriz[nueva_fila][nueva_columna] = agente
-                    nodos.append({"padre":{"pos":posicion_actual,"estado":estado_padre,"nodo":n},"costo":costo_actual + costo, "estado":estado_actual,
-                                "desplazamiento":direccion,
-                                "posicion":(nueva_fila,nueva_columna)
-                                ,"profundidad":profundidad + 1})
-                    cola.append({"matriz":matriz,"costo":costo_actual + costo})
-                    return (nueva_fila,nueva_columna)
-                elif(
-                    estado_actual["cubeta"] == "2L" and
-                    estado_abuelo["cubeta"] == None
-                ):
-
-                    matriz[fila][columna] = 0
-                    matriz[nueva_fila][nueva_columna] = agente
-                    nodos.append({"padre":{"pos":posicion_actual,"estado":estado_padre,"nodo":n},"costo":costo_actual + costo, "estado":estado_actual,
-                                "desplazamiento":direccion,
-                                "posicion":(nueva_fila,nueva_columna)
-                                ,"profundidad":profundidad + 1})
-                    cola.append({"matriz":matriz,"costo":costo_actual + costo})
-                    return (nueva_fila,nueva_columna)  
-            return (nueva_fila,nueva_columna)
+                # if(matriz[nueva_fila][nueva_columna] == moneda_dos):
+                
+                #     matriz[fila][columna] = espacio_vacio
+                #     matriz[nueva_fila][nueva_columna] = caballo_turno               
+                #     print("condicional para movimiento en moneda dos")
+                #     print((nueva_fila,nueva_columna))      
+                    
+                #     cola.append({
+                #         "matriz":matriz,
+                #         "jugador": caballo_jugador,
+                #         "rama_min_max": rama_min_max,
+                #         "pocision_anterior": (fila,columna),
+                #         "pocision_actual": (nueva_fila,nueva_columna),
+                #         "beneficio_acumulado": beneficio + 1,
+                #         "profundidad": profundidad + 2
+                #     })
+                #     return
+                return
+            return
+        return 
 
    
-    matriz_abajo = mover_numero(copy.deepcopy(cola_inicial), nodos[0], 0,"abajo")
-    matriz_arriba = mover_numero(copy.deepcopy(cola_inicial), nodos[0], 0, "derecha")
-    matriz_izquierda = mover_numero(copy.deepcopy(cola_inicial), nodos[0],0, "arriba")
-    matriz_derecha = mover_numero(copy.deepcopy(cola_inicial),nodos[0], 0, "izquierda")
+    
+    def mover_caballo():
 
-
-    def llenar_cola(n, cola):
-        while cola:
+        aux = 0
+        n = 0
+        profundidad = 0
+        caballo_turno = caballo_maquina
+        while cola :
+        #while cola:
             m = cola[0]
-            index = 0
+            if (profundidad < m["profundidad"]):
+                profundidad = m["profundidad"]
+                if m["jugador"] == caballo_maquina:
+                    caballo_turno = caballo_jugador
+                elif m["jugador"] == caballo_jugador:
+                    caballo_turno = caballo_maquina    
+            #aux += 1
+            m["jugador"] = caballo_turno
+            if m["profundidad"] + 1 == 3:
+                return
 
-            matriz_abajo = mover_numero(copy.deepcopy(m), nodos[n], n, "abajo")
-            if not matriz_abajo:
-                return encontrar_camino(n)
+            # ADELANTE 
+
+            #movimiento en L atras arriba dos casillas
+            mov_atras_arriba_dos = movimiento_caballo(copy.deepcopy(m),n, "atras_arriba_dos")
+
+            #movimiento en L atras arriba una casilla
+            mov_atras_arriba_uno = movimiento_caballo(copy.deepcopy(m), n, "atras_arriba_una")               
+
+            #movimiento en L atras arriba dos casillas
+            mov_atras_abajo_uno = movimiento_caballo(copy.deepcopy(m),n, "atras_abajo_una")
+
+            #movimiento en L atras arriba dos casillas
+            mov_atras_abajo_dos = movimiento_caballo(copy.deepcopy(m),n, "atras_abajo_dos")
+
             
-            matriz_arriba = mover_numero(copy.deepcopy(m), nodos[n], n, "derecha")
-            if not matriz_arriba:
-                return encontrar_camino(n)
+            #ADELANTE
+
+            #movimiento en L atras arriba dos casillas
+            mov_adelante_abajo_dos = movimiento_caballo(copy.deepcopy(m),n, "adelante_abajo_dos")  
+
+
+            #movimiento en L atras arriba dos casillas
+            mov_adelante_abajo_una = movimiento_caballo(copy.deepcopy(m),n, "adelante_abajo_una")
+               
+
+            #movimiento en L atras arriba una casilla
+            mov__adelante_arriba_una = movimiento_caballo(copy.deepcopy(m),n, "adelante_arriba_una")            
+
+            #movimiento en L atras arriba dos casillas
+            mov__adelante_arriba_dos = movimiento_caballo(copy.deepcopy(m),n, "adelante_arriba_dos")
+
             
-            matriz_izquierda = mover_numero(copy.deepcopy(m), nodos[n], n, "arriba")
-            if not matriz_izquierda:
-                return encontrar_camino(n)
-            
-            matriz_derecha = mover_numero(copy.deepcopy(m), nodos[n], n, "izquierda")
-            if not matriz_derecha:
-                return encontrar_camino(n)
-
-            cola.pop(index)
-            n += 1
+            cola.pop(0)              
+            n += 1           
 
 
-    camino = llenar_cola(1,cola)  
-    ultimo_nodo = nodos[len(nodos)-1]
-    tiempo_fin = time.time()
-    tiempo_ejecucion = (tiempo_fin - tiempo_inicio) 
-    # print(tiempo_ejecucion)
-    minutos = int(tiempo_ejecucion // 60)
-    # segundos = round(tiempo_ejecucion) 
-    # print(segundos)
-    # milesimas  = round((tiempo_ejecucion - segundos) * 100)
-    # print(cola[len(cola)-1]["matriz"])
-    reporte = {
-       "nodos_expandidos": len(nodos),
-       "profundidad_arbol": ultimo_nodo["profundidad"],
-       "tiempo_computo": str( round(tiempo_ejecucion,4)) + " seg"
-    }
-    print(reporte)      
-    return {"camino":camino,"reporte":reporte}    
+    camino = mover_caballo()   
+    #print(cola[1])
+    #print(camino)
 
-# from Reader import Reader
-# print(Reader('Prueba1.txt'))
-# agente_amplitud(Reader('Prueba1.txt'))
+    return camino 
+
+agente_amplitud(Reader('Prueba1.txt'))
