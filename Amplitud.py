@@ -12,6 +12,8 @@ def agente_amplitud(_matriz):
     moneda_dos = 2   
     caballo_maquina = 3   
     caballo_jugador = 4
+    puntos_moneda_uno = 1
+    puntos_moneda_dos = 3
     
 
 
@@ -23,13 +25,14 @@ def agente_amplitud(_matriz):
         "rama_min_max": "max",
         "pocision_anterior": (0,0),
         "pocision_actual": (0,0),
+        "puntos_obtenidos": 0,
         "beneficio_acumulado": 0,
         "profundidad": 0,
         "nodo_padre": None 
     }]
     #cola = []
     nodos = []
-
+    nodos.append(cola[0])
 
     def encontrar_camino(ultimo_nodo):
         camino = []
@@ -49,6 +52,20 @@ def agente_amplitud(_matriz):
                     return fila, columna
         return None   
 
+    def sumatoria_beneficio(pocision, matriz):
+        fila,columna = pocision
+        movimientos = [(-1, -2), (-2, -1), (-2, 1), (-1, 2), (1, -2), (2, -1), (2, 1), (1, 2)]
+        suma = 0
+
+        for mov in movimientos:
+            nueva_fila = fila + mov[0]
+            nueva_columna = columna + mov[1]
+
+            if 0 <= nueva_fila < len(matriz) and 0 <= nueva_columna < len(matriz[0]):
+                if matriz[nueva_fila][nueva_columna] == 1 or matriz[nueva_fila][nueva_columna] == 2:
+                    suma += matriz[nueva_fila][nueva_columna]
+
+        return suma
     
 
     def movimiento_caballo(_cola, n, direccion):        
@@ -62,8 +79,9 @@ def agente_amplitud(_matriz):
         beneficio = _cola["beneficio_acumulado"]
         profundidad = _cola["profundidad"]
         nodo_padre = _cola["nodo_padre"]
+        puntos_obtenidos = _cola["puntos_obtenidos"]
 
-        print(direccion)
+        #print(direccion)
 
         if not posicion_actual:
             return matriz  # Si no se encuentra el número, no se realiza ningún movimiento
@@ -94,6 +112,7 @@ def agente_amplitud(_matriz):
         if desplazamiento:
             nueva_fila = fila + desplazamiento[0]
             nueva_columna = columna + desplazamiento[1]
+            beneficio = sumatoria_beneficio((nueva_fila,nueva_columna),matriz)
 
             if( 0 <= nueva_fila < len(matriz) and
                 0 <= nueva_columna < len(matriz[nueva_fila]) and
@@ -103,93 +122,133 @@ def agente_amplitud(_matriz):
 
                 matriz[fila][columna] = espacio_vacio
                 matriz[nueva_fila][nueva_columna] = caballo_turno               
-                print("condicional para movimiento en espacio vacio",caballo_turno)
-                print((fila,columna)) 
+                #print("condicional para movimiento en espacio vacio",caballo_turno)
+                #print((fila,columna)) 
 
-                cola.append({
+                # cola.append({
+                #         "matriz":matriz,
+                #         "jugador": caballo_turno,
+                #         "rama_min_max": rama_min_max,
+                #         "pocision_anterior": (fila,columna),
+                #         "pocision_actual": (nueva_fila,nueva_columna),
+                #         "puntos_obtenidos": puntos_obtenidos,
+                #         "beneficio_acumulado": beneficio,
+                #         "profundidad": profundidad + 1, 
+                #         "nodo_padre": n
+                # })
+                # nodos.append({
+                #         "matriz":matriz,
+                #         "jugador": caballo_turno,
+                #         "rama_min_max": rama_min_max,
+                #         "pocision_anterior": (fila,columna),
+                #         "pocision_actual": (nueva_fila,nueva_columna),
+                #         "puntos_obtenidos": puntos_obtenidos,
+                #         "beneficio_acumulado": beneficio,
+                #         "profundidad": profundidad + 1, 
+                #         "nodo_padre": n
+                # })
+                # #print(profundidad + 1)
+                # print(rama_min_max)
+                # #print(n)
+                # #print(beneficio)
+                # return
+
+                #condicional en caso de que que caiga en una casilla vacía    
+                if(matriz[nueva_fila][nueva_columna] == espacio_vacio):
+                
+                    matriz[fila][columna] = espacio_vacio
+                    matriz[nueva_fila][nueva_columna] = caballo_turno               
+                    #print("condicional para movimiento en espacio vacio")
+                    #print((nueva_fila,nueva_columna))      
+                    
+                    cola.append({
                         "matriz":matriz,
                         "jugador": caballo_turno,
                         "rama_min_max": rama_min_max,
                         "pocision_anterior": (fila,columna),
                         "pocision_actual": (nueva_fila,nueva_columna),
+                        "puntos_obtenidos": puntos_obtenidos,
                         "beneficio_acumulado": beneficio,
                         "profundidad": profundidad + 1, 
                         "nodo_padre": n
-                })
+                    })
+                    nodos.append({
+                            "matriz":matriz,
+                            "jugador": caballo_turno,
+                            "rama_min_max": rama_min_max,
+                            "pocision_anterior": (fila,columna),
+                            "pocision_actual": (nueva_fila,nueva_columna),
+                            "puntos_obtenidos": puntos_obtenidos,
+                            "beneficio_acumulado": beneficio,
+                            "profundidad": profundidad + 1, 
+                            "nodo_padre": n
+                    })
+                    #print(profundidad + 1)
+                    #print(rama_min_max)
+                    #print(n)
+                    #print(beneficio)
+                   
+                    return
+                
+                #Condicional para movimiento en casilla con moneda 
+                
+                if(matriz[nueva_fila][nueva_columna] == moneda_uno):
+                
+                    matriz[fila][columna] = espacio_vacio
+                    matriz[nueva_fila][nueva_columna] = caballo_turno               
+                    cola.append({
+                            "matriz":matriz,
+                            "jugador": caballo_turno,
+                            "rama_min_max": rama_min_max,
+                            "pocision_anterior": (fila,columna),
+                            "pocision_actual": (nueva_fila,nueva_columna),
+                            "puntos_obtenidos": puntos_obtenidos + puntos_moneda_uno,
+                            "beneficio_acumulado": beneficio,
+                            "profundidad": profundidad + 1, 
+                            "nodo_padre": n
+                        })
+                    nodos.append({
+                            "matriz":matriz,
+                            "jugador": caballo_turno,
+                            "rama_min_max": rama_min_max,
+                            "pocision_anterior": (fila,columna),
+                            "pocision_actual": (nueva_fila,nueva_columna),
+                            "puntos_obtenidos": puntos_obtenidos + puntos_moneda_uno,
+                            "beneficio_acumulado": beneficio,
+                            "profundidad": profundidad + 1, 
+                            "nodo_padre": n
+                    })
+                    return
+                
+                #Condicional para movimiento en casilla con moneda 
 
-                print(profundidad + 1)
-                return
-
-                # #condicional en caso de que que caiga en una casilla vacía    
-                # if(matriz[nueva_fila][nueva_columna] == espacio_vacio):
+                if(matriz[nueva_fila][nueva_columna] == moneda_dos):
                 
-                #     matriz[fila][columna] = espacio_vacio
-                #     matriz[nueva_fila][nueva_columna] = caballo_turno               
-                #     print("condicional para movimiento en espacio vacio")
-                #     print((nueva_fila,nueva_columna))      
-                    
-                #     cola.append({
-                #         "matriz":matriz,
-                #         "jugador": caballo_jugador,
-                #         "rama_min_max": rama_min_max,
-                #         "pocision_anterior": (fila,columna),
-                #         "pocision_actual": (nueva_fila,nueva_columna),
-                #         "beneficio_acumulado": beneficio,
-                #         "profundidad": profundidad + 1, 
-                #         "nodo_padre": nodo_padre + 1
-                #     })
-
-                #     nodos.append({
-                #         "matriz":matriz,
-                #         "jugador": caballo_jugador,
-                #         "rama_min_max": rama_min_max,
-                #         "pocision_anterior": (fila,columna),
-                #         "pocision_actual": (nueva_fila,nueva_columna),
-                #         "beneficio_acumulado": beneficio,
-                #         "profundidad": profundidad + 1 
-                #     })
-                #     return
-                
-                # #Condicional para movimiento en casilla con moneda 
-                
-                # if(matriz[nueva_fila][nueva_columna] == moneda_uno):
-                
-                #     matriz[fila][columna] = espacio_vacio
-                #     matriz[nueva_fila][nueva_columna] = caballo_turno               
-                #     print("condicional para movimiento en moneda uno")
-                #     print((nueva_fila,nueva_columna))      
-                    
-                #     cola.append({
-                #         "matriz":matriz,
-                #         "jugador": caballo_jugador,
-                #         "rama_min_max": rama_min_max,
-                #         "pocision_anterior": (fila,columna),
-                #         "pocision_actual": (nueva_fila,nueva_columna),
-                #         "beneficio_acumulado": beneficio + 1,
-                #         "profundidad": profundidad + 1
-                #     })
-                #     return
-                
-                # #Condicional para movimiento en casilla con moneda 
-
-                # if(matriz[nueva_fila][nueva_columna] == moneda_dos):
-                
-                #     matriz[fila][columna] = espacio_vacio
-                #     matriz[nueva_fila][nueva_columna] = caballo_turno               
-                #     print("condicional para movimiento en moneda dos")
-                #     print((nueva_fila,nueva_columna))      
-                    
-                #     cola.append({
-                #         "matriz":matriz,
-                #         "jugador": caballo_jugador,
-                #         "rama_min_max": rama_min_max,
-                #         "pocision_anterior": (fila,columna),
-                #         "pocision_actual": (nueva_fila,nueva_columna),
-                #         "beneficio_acumulado": beneficio + 1,
-                #         "profundidad": profundidad + 2
-                #     })
-                #     return
-                
+                    matriz[fila][columna] = espacio_vacio
+                    matriz[nueva_fila][nueva_columna] = caballo_turno               
+                    cola.append({
+                        "matriz":matriz,
+                        "jugador": caballo_turno,
+                        "rama_min_max": rama_min_max,
+                        "pocision_anterior": (fila,columna),
+                        "pocision_actual": (nueva_fila,nueva_columna),
+                        "puntos_obtenidos": puntos_obtenidos + puntos_moneda_dos,
+                        "beneficio_acumulado": beneficio,
+                        "profundidad": profundidad + 1, 
+                        "nodo_padre": n
+                    })
+                    nodos.append({
+                            "matriz":matriz,
+                            "jugador": caballo_turno,
+                            "rama_min_max": rama_min_max,
+                            "pocision_anterior": (fila,columna),
+                            "pocision_actual": (nueva_fila,nueva_columna),
+                            "puntos_obtenidos": puntos_obtenidos + puntos_moneda_dos,
+                            "beneficio_acumulado": beneficio,
+                            "profundidad": profundidad + 1, 
+                            "nodo_padre": n
+                    })
+                return                
             return
         return 
 
@@ -201,19 +260,24 @@ def agente_amplitud(_matriz):
         n = 0
         profundidad = 0
         caballo_turno = caballo_maquina
+        rama_min_max = "max"
         while True:
         #while cola:
             m = cola[0]
+           # m["rama_min_max"] = rama_min_max
             if (profundidad < m["profundidad"]):
                 profundidad = m["profundidad"]
                 if m["jugador"] == caballo_maquina:
                     caballo_turno = caballo_jugador
+                    rama_min_max = "min"
                 elif m["jugador"] == caballo_jugador:
                     caballo_turno = caballo_maquina    
+                    rama_min_max = "max"
             #aux += 1
             m["jugador"] = caballo_turno
-            if m["profundidad"] + 1 == 4:
-                return
+            m["rama_min_max"] = rama_min_max
+            if m["profundidad"] + 1 == 3:
+                break
 
             # ADELANTE 
 
@@ -250,6 +314,12 @@ def agente_amplitud(_matriz):
             cola.pop(0)              
             n += 1           
 
+        puntos_alcanzables = 0
+        for movimiento in nodos:
+            print(movimiento["rama_min_max"])
+            print(movimiento["beneficio_acumulado"],"\n")
+            
+            
 
     camino = mover_caballo()   
     #print(cola[1])
