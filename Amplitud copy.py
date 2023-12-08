@@ -18,9 +18,7 @@ def agente_amplitud(_matriz):
 
 
     matriz_inicial = _matriz
-    matriz_original = copy.deepcopy(_matriz)
-    recorrido = []   
-    recorrido_min = []
+
     cola = [{
         "matriz":matriz_inicial,
         "jugador": caballo_maquina,
@@ -30,14 +28,24 @@ def agente_amplitud(_matriz):
         "puntos_obtenidos": 0,
         "beneficio_acumulado": 0,
         "profundidad": 0,
-        "nodo_padre": 0, 
+        "nodo_padre": None, 
         "alpha": -10000000,
         "alpha_monedas": -10000000
-    }]    
+    }]
+    #cola = []
     nodos = []
     nodos.append(cola[0])
 
-    
+    def encontrar_camino(ultimo_nodo):
+        camino = []
+        index = ultimo_nodo        
+        while (index > 0):            
+            camino.append(nodos[index]["posicion"])
+            index = nodos[index]["padre"]["nodo"]          
+        camino.append(nodos[index]["posicion"])
+        camino.reverse()   
+        return camino
+
     def encontrar_posicion(matriz, numero):
         # Encuentra la posición actual del número en la matriz
         for fila in range(len(matriz)):
@@ -62,18 +70,22 @@ def agente_amplitud(_matriz):
         return suma
     
 
-    def movimiento_caballo(_cola, n, direccion):    
+    def movimiento_caballo(_cola, n, direccion):        
+
+        
 
         matriz = _cola["matriz"]
         caballo_turno = _cola["jugador"]        
         posicion_actual = encontrar_posicion(matriz, caballo_turno)    
         rama_min_max = _cola["rama_min_max"]
         beneficio = _cola["beneficio_acumulado"]
-        profundidad = _cola["profundidad"]        
+        profundidad = _cola["profundidad"]
+        nodo_padre = _cola["nodo_padre"]
         puntos_obtenidos = _cola["puntos_obtenidos"]
         alpha = _cola["alpha"]
         alpha_monedas = _cola["alpha_monedas"]
-        
+
+        #print(direccion)
 
         if not posicion_actual:
             return matriz  # Si no se encuentra el número, no se realiza ningún movimiento
@@ -109,7 +121,7 @@ def agente_amplitud(_matriz):
             if( 0 <= nueva_fila < len(matriz) and
                 0 <= nueva_columna < len(matriz[nueva_fila]) and
                 matriz[nueva_fila][nueva_columna] != enemigo 
-                and matriz[nueva_fila][nueva_columna] != casilla_tomada
+              #  and matriz[nueva_fila][nueva_columna] != casilla_tomada
                 ):
 
                 #condicional en caso de que que caiga en una casilla vacía    
@@ -221,7 +233,8 @@ def agente_amplitud(_matriz):
                         "puntos_acumulados": 0                        
         }
     ]
-    
+    print(estado_jugador[0])
+
     def movimiento_caballo_jugador(anterior,nuevo):      
 
         fila,columna = anterior
@@ -233,7 +246,7 @@ def agente_amplitud(_matriz):
         if( 0 <= nueva_fila < len(matriz) and
             0 <= nueva_columna < len(matriz[nueva_fila]) and
             matriz[nueva_fila][nueva_columna] != enemigo 
-            and matriz[nueva_fila][nueva_columna] != casilla_tomada
+            #  and matriz[nueva_fila][nueva_columna] != casilla_tomada
             ):
 
             #condicional en caso de que que caiga en una casilla vacía    
@@ -273,96 +286,55 @@ def agente_amplitud(_matriz):
             return
         return
 
-    def distancia_manhattan(p1, p2):
-        return abs(p1[0] - p2[0]) + abs(p1[1] - p2[1])
+            
+    
+    def mover_caballo():
 
-    def encontrar_posicion_mas_cercana(matriz, fila, columna):
-        uno_o_dos_encontrado = False
-        distancia_mas_cercana = float('inf')
-        posicion_mas_cercana = None
-
-        for i in range(len(matriz)):
-            for j in range(len(matriz[0])):
-                if matriz[i][j] == 1 or matriz[i][j] == 2:
-                    uno_o_dos_encontrado = True
-                    dist = distancia_manhattan((fila, columna), (i, j))
-                    if dist < distancia_mas_cercana:
-                        distancia_mas_cercana = dist
-                        posicion_mas_cercana = (i, j)
-
-        return uno_o_dos_encontrado, posicion_mas_cercana
-
-    def encontrar_mejor_movimiento_en_L(matriz, fila, columna, fila_previa, columna_previa, visitados):
-        movimientos = [(-1, -2), (-2, -1), (-2, 1), (-1, 2), (1, -2), (2, -1), (2, 1), (1, 2)]
-        uno_o_dos_cercano, posicion_mas_cercana = encontrar_posicion_mas_cercana(matriz, fila, columna)
-
-        if not uno_o_dos_cercano:
-            return None
-
-        mejor_movimiento = None
-        mejor_distancia = float('inf')
-
-        for mov in movimientos:
-            nueva_fila = fila + mov[0]
-            nueva_columna = columna + mov[1]
-
-            if 0 <= nueva_fila < len(matriz) and 0 <= nueva_columna < len(matriz[0]) and (nueva_fila, nueva_columna) != (fila_previa, columna_previa) and (nueva_fila, nueva_columna) not in visitados:
-                dist = distancia_manhattan((nueva_fila, nueva_columna), posicion_mas_cercana)
-                if dist < mejor_distancia:
-                    mejor_distancia = dist
-                    mejor_movimiento = (nueva_fila, nueva_columna)
-
-        return mejor_movimiento
-
-    def encontrar_camino_hacia_1_o_2(matriz, fila_inicial, columna_inicial, posiciones_evitar):
-        visitados = set(posiciones_evitar)
-        camino = [(fila_inicial, columna_inicial)]
-
-        fila_previa = None
-        columna_previa = None
-
-        while True:
-            movimiento = encontrar_mejor_movimiento_en_L(matriz, camino[-1][0], camino[-1][1], fila_previa, columna_previa, visitados)
-            if movimiento is None:
-                break
-            visitados.add(movimiento)
-            camino.append(movimiento)
-            fila_previa, columna_previa = camino[-2]
-
-            if matriz[movimiento[0]][movimiento[1]] == 1 or matriz[movimiento[0]][movimiento[1]] == 2:
-                break
-
-        return camino        
-
-    def mover_caballo():        
+        aux = 0
+        #while True:
         n = 0
         profundidad = 0
         caballo_turno = caballo_maquina
         rama_min_max = "max"
-        while True:        
-            m = cola[0]        
+        alpha = 0
+        alpha_monedas = 0
+        while True:
+        #while cola:
+            m = cola[0]
+        # m["rama_min_max"] = rama_min_max
             if (profundidad < m["profundidad"]):
                 profundidad = m["profundidad"]
                 if m["jugador"] == caballo_maquina:
                     caballo_turno = caballo_jugador
-                    rama_min_max = "min"                    
+                    rama_min_max = "min"
+                    
                 elif m["jugador"] == caballo_jugador:
                     caballo_turno = caballo_maquina    
-                    rama_min_max = "max"                   
+                    rama_min_max = "max"
+                    
                 
             if  rama_min_max == 'min':
-                m["alpha"] = -10000000    
-                m["alpha_monedas"] = -10000000 
+                alpha = -100000000
+                alpha_monedas = -100000000
             elif rama_min_max == 'max':
-                m["alpha"] = -10000000    
-                m["alpha_monedas"] = -10000000             
+                alpha = 100000000
+                alpha_monedas = 100000000
+
             
+            #aux += 1
             m["jugador"] = caballo_turno
             m["rama_min_max"] = rama_min_max
+            m["alpha"] = alpha
+            m["alpha_monedas"] = alpha_monedas
             if m["profundidad"]  == profundidad_arbol:
                 break
 
-            
+            if(m["nodo_padre"] == None):
+                m["alpha"] = -10000000    
+                m["alpha_monedas"] = -10000000  
+            if(m["nodo_padre"] == 0):
+                m["alpha"] = -10000000    
+                m["alpha_monedas"] = -10000000      
             # ADELANTE 
 
             #movimiento en L atras arriba dos casillas
@@ -397,140 +369,68 @@ def agente_amplitud(_matriz):
             
             cola.pop(0)              
             n += 1           
+
+        puntos_alcanzables = 0
+        j = profundidad_arbol 
         
-        
-        j = profundidad_arbol
-        i = 0
-            
-        while j >= 0:   
+        while j >= 0:
+            for i in range(len(nodos)): 
+                if  nodos[i]["nodo_padre"] != None:  
+                    if nodos[i]["profundidad"] == j:
+                        if nodos[i]["rama_min_max"] == "min": 
+                            if nodos[i]["puntos_obtenidos"] >  0:                                
+                                if  nodos[i]["puntos_acumulados"] <  nodos[nodos[i]["nodo_padre"]]["alpha_monedas"]:                                                                                              
+                                    nodos[nodos[i]["nodo_padre"]]["alpha_monedas"] = nodos[i]["puntos_acumulados"] 
 
-            if nodos[i]["profundidad"] == profundidad:                 
-                if nodos[i]["rama_min_max"] == "min": 
-                    if nodos[i]["puntos_obtenidos"] >  nodos[i]["beneficio_acumulado"]:  
-                        if nodos[i]["puntos_obtenidos"] <  nodos[nodos[i]["nodo_padre"]]["alpha"]:                                                                                              
-                            nodos[nodos[i]["nodo_padre"]]["alpha"] = (-1 * nodos[i]["puntos_obtenidos"]) / 10                            
-                            
+                            elif (nodos[i]["beneficio_acumulado"] < nodos[nodos[i]["nodo_padre"]]["alpha"]):                                                                                              
+                                nodos[nodos[i]["nodo_padre"]]["alpha"] = nodos[i]["beneficio_acumulado"]
+                                nodos[nodos[i]["nodo_padre"]]["alpha_monedas"] = nodos[i]["puntos_acumulados"] 
+                        
+                        elif nodos[i]["rama_min_max"] == "max": 
+                           
+                            if nodos[i]["puntos_obtenidos"] >  0:         
+                                print(nodos[i]["puntos_obtenidos"])                       
+                                #if  nodos[i]["puntos_acumulados"] >  nodos[nodos[i]["nodo_padre"]]["alpha_monedas"]:                                                                                              
+                                nodos[nodos[i]["nodo_padre"]]["alpha"] = nodos[i]["beneficio_acumulado"] 
+                                nodos[nodos[i]["nodo_padre"]]["alpha_monedas"] = nodos[i]["puntos_acumulados"] 
+                                nodos[nodos[i]["nodo_padre"]]["pocision_anterior"] = nodos[i]["pocision_anterior"] 
+                                nodos[nodos[i]["nodo_padre"]]["pocision_actual"] = nodos[i]["pocision_actual"] 
 
-                    elif(nodos[i]["puntos_obtenidos"] <  nodos[i]["beneficio_acumulado"]):
-                        if (nodos[i]["beneficio_acumulado"] < nodos[nodos[i]["nodo_padre"]]["alpha"]):                                                                                              
-                            nodos[nodos[i]["nodo_padre"]]["alpha"] = (-1 * nodos[i]["beneficio_acumulado"])                             
-                            
-                            
-                    elif(nodos[i]["puntos_obtenidos"] == 0 and  nodos[i]["beneficio_acumulado"] == 0):     
-                        if (nodos[nodos[i]["nodo_padre"]]["alpha"] < 0): 
-                            nodos[nodos[i]["nodo_padre"]]["alpha"] = 0     
-                elif nodos[i]["rama_min_max"] == "max": 
-                    if nodos[i]["puntos_obtenidos"] >  nodos[i]["beneficio_acumulado"]:  
-                        if nodos[i]["puntos_obtenidos"] >  nodos[nodos[i]["nodo_padre"]]["alpha"]:                                                                                              
-                            nodos[nodos[i]["nodo_padre"]]["alpha"] = (-1 * nodos[i]["puntos_obtenidos"]) / 10                            
-                            
-
-                    elif(nodos[i]["puntos_obtenidos"] <  nodos[i]["beneficio_acumulado"]):
-                        if (nodos[i]["beneficio_acumulado"] > nodos[nodos[i]["nodo_padre"]]["alpha"]):                                                                                              
-                            nodos[nodos[i]["nodo_padre"]]["alpha"] = (-1 * nodos[i]["beneficio_acumulado"])                             
-                            
-                            
-                    elif(nodos[i]["puntos_obtenidos"] == 0 and  nodos[i]["beneficio_acumulado"] == 0):     
-                        if (nodos[nodos[i]["nodo_padre"]]["alpha"] < 0): 
-                            nodos[nodos[i]["nodo_padre"]]["alpha"] = 0            
-
-            elif nodos[i]["profundidad"] == 1:                 
-                if nodos[i]["rama_min_max"] == "max": 
-                    if nodos[i]["puntos_obtenidos"] >  nodos[i]["beneficio_acumulado"]:  
-                        if nodos[i]["puntos_obtenidos"] >  nodos[nodos[i]["nodo_padre"]]["alpha"]:                                                                                              
-                            nodos[nodos[i]["nodo_padre"]]["alpha"] = (nodos[i]["puntos_obtenidos"] + nodos[i]["alpha"])                          
-                            nodos[nodos[i]["nodo_padre"]]["pocision_anterior"] = nodos[i]["pocision_anterior"] 
-                            nodos[nodos[i]["nodo_padre"]]["pocision_actual"] = nodos[i]["pocision_actual"] 
-                            
-
-                    elif(nodos[i]["puntos_obtenidos"] <  nodos[i]["beneficio_acumulado"]):
-                        if (nodos[i]["beneficio_acumulado"] > nodos[nodos[i]["nodo_padre"]]["alpha"]):                                                                                              
-                            nodos[nodos[i]["nodo_padre"]]["alpha"] = (nodos[i]["beneficio_acumulado"] + nodos[i]["alpha"])                             
-                            nodos[nodos[i]["nodo_padre"]]["pocision_anterior"] = nodos[i]["pocision_anterior"] 
-                            nodos[nodos[i]["nodo_padre"]]["pocision_actual"] = nodos[i]["pocision_actual"] 
-                            #recorrido.clear()
-                            
-                    elif(nodos[i]["puntos_obtenidos"] == 0 and  nodos[i]["beneficio_acumulado"] == 0):     
-                        if (nodos[nodos[i]["nodo_padre"]]["alpha"] <= 0): 
-                            nodos[nodos[i]["nodo_padre"]]["alpha"] = 0    
-                            nodos[nodos[i]["nodo_padre"]]["pocision_anterior"] = encontrar_posicion(_matriz,caballo_maquina) 
-                            fil,col = nodos[nodos[i]["nodo_padre"]]["pocision_anterior"]
-                            pos_act = encontrar_camino_hacia_1_o_2(_matriz,fil,col,recorrido)    
-                            recorrido.append(pos_act[0])                             
-                            nodos[nodos[i]["nodo_padre"]]["pocision_actual"] = pos_act[1]
-                         
-
-            elif nodos[i]["profundidad"] < profundidad:                 
-                if nodos[i]["rama_min_max"] == "min": 
-                    if nodos[i]["puntos_obtenidos"] >  nodos[i]["beneficio_acumulado"]:  
-                        if nodos[i]["puntos_obtenidos"] <  nodos[nodos[i]["nodo_padre"]]["alpha"]:                                                                                              
-                            nodos[nodos[i]["nodo_padre"]]["alpha"] = (nodos[i]["alpha"] + ((-1 * nodos[i]["puntos_obtenidos"]) / 10))           
-                            
-
-                    elif(nodos[i]["puntos_obtenidos"] <  nodos[i]["beneficio_acumulado"]):
-                        if (nodos[i]["beneficio_acumulado"] < nodos[nodos[i]["nodo_padre"]]["alpha"]):                                                                                              
-                            nodos[nodos[i]["nodo_padre"]]["alpha"] = (nodos[i]["alpha"] + (-1 * nodos[i]["beneficio_acumulado"]))                             
-                            
-                            
-                    elif(nodos[i]["puntos_obtenidos"] == 0 and  nodos[i]["beneficio_acumulado"] == 0):     
-                        if (nodos[nodos[i]["nodo_padre"]]["alpha"] < 0): 
-                            nodos[nodos[i]["nodo_padre"]]["alpha"] = 0     
-
-                elif nodos[i]["rama_min_max"] == "max": 
-                    if nodos[i]["puntos_obtenidos"] >  nodos[i]["beneficio_acumulado"]:  
-                        if nodos[i]["puntos_obtenidos"] >  nodos[nodos[i]["nodo_padre"]]["alpha"]:                                                                                              
-                            nodos[nodos[i]["nodo_padre"]]["alpha"] = nodos[i]["puntos_obtenidos"] + nodos[i]["alpha"]                   
-                            
-
-                    elif(nodos[i]["puntos_obtenidos"] <  nodos[i]["beneficio_acumulado"]):
-                        if (nodos[i]["beneficio_acumulado"] > nodos[nodos[i]["nodo_padre"]]["alpha"]):                                                                                              
-                            nodos[nodos[i]["nodo_padre"]]["alpha"] =  nodos[i]["beneficio_acumulado"] + nodos[i]["alpha"]                           
-                            
-                            
-                    elif(nodos[i]["puntos_obtenidos"] == 0 and  nodos[i]["beneficio_acumulado"] == 0):     
-                        if (nodos[nodos[i]["nodo_padre"]]["alpha"] < 0): 
-                            nodos[nodos[i]["nodo_padre"]]["alpha"] = 0            
-            
-            i += 1     
-            if i == len(nodos):
-                j -= 1    
-                i = 0                       
-                  
+                            elif(nodos[i]["puntos_obtenidos"] ==  0):
+                                if (nodos[i]["beneficio_acumulado"] > nodos[nodos[i]["nodo_padre"]]["alpha"]):                                                                                              
+                                    nodos[nodos[i]["nodo_padre"]]["alpha"] = nodos[i]["beneficio_acumulado"]
+                                    nodos[nodos[i]["nodo_padre"]]["alpha_monedas"] = nodos[i]["puntos_acumulados"]   
+                                    nodos[nodos[i]["nodo_padre"]]["pocision_anterior"] = nodos[i]["pocision_anterior"] 
+                                    nodos[nodos[i]["nodo_padre"]]["pocision_actual"] = nodos[i]["pocision_actual"] 
+                                  
+                                            
+            j -= 1       
+          
         fila_anterior, columna_anterior = nodos[0]["pocision_anterior"]
         fila_actual, columna_actual = nodos[0]["pocision_actual"]
     
         _matriz[fila_anterior][columna_anterior] = espacio_vacio
-        _matriz[fila_actual][columna_actual] = caballo_maquina    
-        
-        if nodos[0]["alpha"] > 1:
-           recorrido.clear()
-        
+        _matriz[fila_actual][columna_actual] = caballo_maquina      
+
         cola.clear()
         nodos.clear()
-        comparar_matrices(matriz_original,_matriz)
-        imprimir_matriz(_matriz)        
-        fila_anterior_jugador,columna_anterior_jugador = encontrar_posicion(_matriz, caballo_jugador)    
+        
+        fila_anterior_jugador,columna_anterior_jugador = encontrar_posicion(_matriz, caballo_jugador)
+        #print(fila_anterior_jugador,columna_anterior_jgador)
+         
         fila_jugador = int(input("Ingrese la posición de la fila: "))
         columna_jugador = int(input("Ingrese la posición de la columna: "))
         movimiento_caballo_jugador(( fila_anterior_jugador,columna_anterior_jugador),(fila_jugador,columna_jugador))
-        comparar_matrices(matriz_original,_matriz)
-        
+
+        # _matriz[fila_anterior_jugador][columna_anterior_jugador] = espacio_vacio
+        # _matriz[fila_jugador][columna_jugador] = caballo_jugador  
 
     def imprimir_matriz(matriz):
         for fila in matriz:
             print(" ".join(map(str, fila)))
-    def comparar_matrices(matriz_modelo, segunda_matriz):
-        for i in range(len(matriz_modelo)):
-            for j in range(len(matriz_modelo[0])):
-                if matriz_modelo[i][j] in [1, 2] and segunda_matriz[i][j] == 0:
-                    segunda_matriz[i][j] = 5            
-    #mover_caballo() 
-    #imprimir_matriz(_matriz)  
+    
     while True:
-        comparar_matrices(matriz_original,_matriz) 
-        mover_caballo() 
-        
-                 
+        mover_caballo()    
         cola = [{
             "matriz":matriz_inicial,
             "jugador": caballo_maquina,
@@ -540,14 +440,22 @@ def agente_amplitud(_matriz):
             "puntos_obtenidos": 0,
             "beneficio_acumulado": 0,
             "profundidad": 0,
-            "nodo_padre": 0, 
+            "nodo_padre": None, 
             "alpha": -10000000,
             "alpha_monedas": -10000000
         }]
-        
-        #nodos = []
-        nodos.append(cola[0])         
+        #cola = []
+        nodos = []
+        nodos.append(cola[0])
+        imprimir_matriz(_matriz)   
         print(estado_jugador)
-   
+
+    
+    
+    
+
+    
+    #return  _matriz
+
 
 agente_amplitud(Reader('Prueba1.txt'))
